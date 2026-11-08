@@ -391,16 +391,6 @@ export default function LoginPage() {
                 </button>
               </form>
             )}
-
-            {/* Back link */}
-            <div className="mt-6 pt-5 border-t border-[#f0ede6] text-center">
-              <Link
-                href="/"
-                className="text-xs text-slate-500 hover:text-slate-800 font-semibold transition inline-flex items-center gap-1.5"
-              >
-                <span>✕ Kembali ke Katalog Kost</span>
-              </Link>
-            </div>
           </div>
 
           {/* Footer Subtext */}

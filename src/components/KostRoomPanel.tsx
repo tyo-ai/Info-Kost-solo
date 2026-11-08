@@ -65,36 +65,23 @@ Apakah saat ini masih ada kamar yang kosong untuk disewa dan bisa dibantu jadwal
 
   return (
     <div className="bg-white rounded-2xl border border-[#e8e4db] shadow-md overflow-hidden animate-fadeIn space-y-5">
-      {/* Top Header Toolbar dengan Tombol Tanda Silang (✕) Kembali */}
+      {/* Top Header Toolbar dengan Tombol Tanda Silang (✕) Bersih */}
       <div className="bg-[#f6f3eb] border-b border-[#e8e4db] px-5 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[#0c8a7e] animate-pulse"></span>
+          <span className="text-xs font-bold text-slate-900">Detail Kamar Terpilih dari Peta</span>
+        </div>
+
+        {/* Tombol Tanda Silang (✕) Tunggal */}
         <button
           onClick={onBack}
           type="button"
-          aria-label="Tutup dan kembali ke semua kost"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-[#0c8a7e] hover:bg-white px-3 py-1.5 rounded-full transition border border-transparent hover:border-[#e8e4db] shadow-2xs"
+          title="Tutup dan kembali ke semua kost"
+          aria-label="Tutup dan kembali"
+          className="w-8 h-8 rounded-full bg-white hover:bg-[#eae5d8] text-slate-700 hover:text-slate-900 border border-[#e8e4db] flex items-center justify-center text-xs font-bold transition shadow-2xs group"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-          <span>Kembali ke Semua Kost</span>
+          <span className="group-hover:rotate-90 transition-transform duration-200">✕</span>
         </button>
-
-        <div className="flex items-center gap-2">
-          <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold text-[#0c8a7e] bg-white border border-[#e8e4db] px-2.5 py-1 rounded-full shadow-2xs">
-            <span className="w-2 h-2 rounded-full bg-[#0c8a7e] animate-ping"></span>
-            Titik Peta Terpilih
-          </span>
-
-          {/* Tombol Tanda Silang (✕) */}
-          <button
-            onClick={onBack}
-            type="button"
-            title="Tutup & Kembali ke Tampilan Semua Kost"
-            className="w-8 h-8 rounded-full bg-white hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-[#e8e4db] flex items-center justify-center text-xs font-bold transition shadow-2xs group"
-          >
-            <span className="group-hover:rotate-90 transition-transform duration-200">✕</span>
-          </button>
-        </div>
       </div>
 
       {/* Hero Kost */}

@@ -378,18 +378,8 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
             </button>
           </form>
         )}
-
-        {/* Footer Tombol Kembali via Tanda Silang Text */}
-        <div className="mt-5 pt-4 border-t border-[#f0ede6] text-center">
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-xs text-slate-500 hover:text-slate-800 font-semibold transition inline-flex items-center gap-1.5"
-          >
-            <span>✕ Tutup & Kembali ke Beranda</span>
-          </button>
-        </div>
       </div>
     </div>
   );
 }
+

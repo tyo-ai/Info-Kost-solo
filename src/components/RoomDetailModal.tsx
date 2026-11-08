@@ -134,12 +134,6 @@ Mohon informasinya ya min, terima kasih!`
               <span>Tanya WA</span>
             </a>
             <button
-              onClick={onClose}
-              className="px-4 py-2.5 border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg transition"
-            >
-              Tutup
-            </button>
-            <button
               onClick={() => {
                 onClose();
                 onProceedBooking(kost);
