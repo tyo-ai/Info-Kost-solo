@@ -236,21 +236,8 @@ export default function AdminDashboardPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8 border-b border-slate-200 pb-4">
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight">Dashboard Manajemen & Verifikasi Kost</h1>
-            {isConnected ? (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                Supabase Terhubung
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-amber-50 text-amber-800 border border-amber-200">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                Demo / Standby
-              </span>
-            )}
-          </div>
-          <p className="text-sm text-slate-700">Area operasional Surakarta: Input listing baru & persetujuan transfer manual.</p>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight">Dashboard Manajemen & Verifikasi Kost</h1>
+          <p className="text-sm text-slate-600 mt-1">Area operasional Surakarta: Input listing baru & persetujuan transfer manual.</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

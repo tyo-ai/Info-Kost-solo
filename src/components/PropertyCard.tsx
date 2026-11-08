@@ -47,8 +47,8 @@ export default function PropertyCard({
       id={`kost-card-${kost.id}`}
       className={`group bg-white rounded-2xl border transition-all duration-200 flex flex-col overflow-hidden ${
         isSelected
-          ? 'border-[#0c8a7e] ring-2 ring-[#0c8a7e]/40 shadow-lg scale-[1.01]'
-          : 'border-[#e8e4db] hover:border-[#0c8a7e]/40 shadow-xs hover:shadow-md'
+          ? 'border-slate-900 ring-2 ring-slate-900 shadow-md scale-[1.01]'
+          : 'border-[#e8e4db] hover:border-slate-400 shadow-xs hover:shadow-md'
       }`}
     >
       {/* Container Gambar Rasio 16:10 */}
@@ -72,7 +72,7 @@ export default function PropertyCard({
                 ? 'bg-sky-50 text-sky-800 border border-sky-200'
                 : kost.type === 'putri'
                 ? 'bg-rose-50 text-rose-800 border border-rose-200'
-                : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                : 'bg-amber-50 text-amber-900 border border-amber-200'
             }`}
           >
             {kost.type}
@@ -81,12 +81,6 @@ export default function PropertyCard({
             {kost.subdistrict}
           </span>
         </div>
-
-        {isSelected && (
-          <div className="absolute top-3 right-3 bg-[#0c8a7e] text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow">
-            ● Terpilih di Peta
-          </div>
-        )}
       </div>
 
       {/* Konten Kartu */}
@@ -94,12 +88,12 @@ export default function PropertyCard({
         <div>
           <h3
             onClick={() => onSelectDetail(kost)}
-            className="font-bold text-slate-900 text-base leading-snug group-hover:text-[#0c8a7e] transition cursor-pointer"
+            className="font-bold text-slate-900 text-base leading-snug group-hover:text-amber-800 transition cursor-pointer"
           >
             {kost.name}
           </h3>
-          <p className="text-xs text-slate-600 mt-1 flex items-center gap-1.5">
-            <svg className="w-3.5 h-3.5 text-[#0c8a7e] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <p className="text-xs text-slate-500 mt-1 flex items-center gap-1.5">
+            <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
@@ -109,10 +103,10 @@ export default function PropertyCard({
 
         <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
           <div>
-            <span className="text-[10px] text-slate-500 uppercase font-semibold block">Mulai dari</span>
+            <span className="text-[10px] text-slate-400 uppercase font-semibold block">Mulai dari</span>
             <div className="text-slate-900 font-extrabold text-sm sm:text-base tracking-tight">
               Rp {Number(lowestPrice).toLocaleString('id-ID')}
-              <span className="text-[11px] font-normal text-slate-500"> /bln</span>
+              <span className="text-[11px] font-normal text-slate-400"> /bln</span>
             </div>
           </div>
 
@@ -125,7 +119,7 @@ export default function PropertyCard({
             </button>
             <button
               onClick={() => onSelectBooking(kost)}
-              className="bg-[#0c8a7e] hover:bg-[#097368] text-white text-xs font-bold px-3 py-2 rounded-lg shadow-2xs transition active:scale-95"
+              className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3 py-2 rounded-lg shadow-2xs transition active:scale-95"
             >
               Ajukan Sewa
             </button>

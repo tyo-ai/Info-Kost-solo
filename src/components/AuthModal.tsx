@@ -143,10 +143,10 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
         onClick={onClose}
       />
 
-      {/* Pop-up Modal yang Muncul dari Bawah (Slide-up Animation) */}
+      {/* Pop-up Modal yang Muncul dari Bawah */}
       <div className="relative w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-[#e8e4db] p-6 sm:p-8 z-10 max-h-[92vh] overflow-y-auto transform transition-all animate-in slide-in-from-bottom-8 duration-300">
         
-        {/* Tombol Tanda Silang (✕) untuk Menutup Pop-up dan Kembali */}
+        {/* Tombol Tanda Silang (✕) Tunggal di Pojok Kanan Atas */}
         <button
           onClick={onClose}
           type="button"
@@ -182,7 +182,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
             }}
             className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
               mode === 'login'
-                ? 'bg-[#0c8a7e] text-white shadow-xs'
+                ? 'bg-slate-900 text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -197,7 +197,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
             }}
             className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
               mode === 'register'
-                ? 'bg-[#0c8a7e] text-white shadow-xs'
+                ? 'bg-slate-900 text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -247,7 +247,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder="nama@email.com"
-                  className="w-full pl-10 pr-4 py-2.5 border border-[#e2ded4] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0c8a7e]/20 focus:border-[#0c8a7e] bg-white transition"
+                  className="w-full pl-10 pr-4 py-2.5 border border-[#e2ded4] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 bg-white transition"
                 />
               </div>
             </div>
@@ -276,7 +276,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   placeholder="Masukkan kata sandi"
-                  className="w-full pl-10 pr-10 py-2.5 border border-[#e2ded4] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0c8a7e]/20 focus:border-[#0c8a7e] bg-white transition"
+                  className="w-full pl-10 pr-10 py-2.5 border border-[#e2ded4] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 bg-white transition"
                 />
                 <button
                   type="button"
@@ -292,7 +292,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-2 bg-[#0c8a7e] hover:bg-[#097368] disabled:bg-[#0c8a7e]/50 text-white font-bold py-2.5 rounded-xl shadow-xs transition active:scale-[0.99] flex items-center justify-center gap-2 text-sm"
+              className="w-full mt-2 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-400 text-white font-bold py-2.5 rounded-xl shadow-xs transition active:scale-[0.99] flex items-center justify-center gap-2 text-sm"
             >
               {isLoading ? (
                 <>
@@ -316,7 +316,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Contoh: Budi Pratama"
-                className="w-full px-3.5 py-2.5 border border-[#e2ded4] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0c8a7e]/20 focus:border-[#0c8a7e] bg-white transition"
+                className="w-full px-3.5 py-2.5 border border-[#e2ded4] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 bg-white transition"
               />
             </div>
 
@@ -330,7 +330,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="nama@email.com"
-                className="w-full px-3.5 py-2.5 border border-[#e2ded4] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0c8a7e]/20 focus:border-[#0c8a7e] bg-white transition"
+                className="w-full px-3.5 py-2.5 border border-[#e2ded4] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 bg-white transition"
               />
             </div>
 
@@ -344,7 +344,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="Minimal 6 karakter"
-                className="w-full px-3.5 py-2.5 border border-[#e2ded4] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0c8a7e]/20 focus:border-[#0c8a7e] bg-white transition"
+                className="w-full px-3.5 py-2.5 border border-[#e2ded4] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 bg-white transition"
               />
             </div>
 
@@ -358,14 +358,14 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 placeholder="Ulangi kata sandi"
-                className="w-full px-3.5 py-2.5 border border-[#e2ded4] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0c8a7e]/20 focus:border-[#0c8a7e] bg-white transition"
+                className="w-full px-3.5 py-2.5 border border-[#e2ded4] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 bg-white transition"
               />
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-2 bg-[#0c8a7e] hover:bg-[#097368] disabled:bg-[#0c8a7e]/50 text-white font-bold py-2.5 rounded-xl shadow-xs transition active:scale-[0.99] flex items-center justify-center gap-2 text-sm"
+              className="w-full mt-2 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-400 text-white font-bold py-2.5 rounded-xl shadow-xs transition active:scale-[0.99] flex items-center justify-center gap-2 text-sm"
             >
               {isLoading ? (
                 <>
@@ -382,4 +382,3 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
     </div>
   );
 }
-

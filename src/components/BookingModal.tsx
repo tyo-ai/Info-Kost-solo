@@ -137,7 +137,7 @@ Mohon segera diverifikasi ya min. Terima kasih!`
         ) : (
           <>
             <div>
-              <span className="text-[10px] font-bold text-[#0c8a7e] uppercase tracking-wider">Form Pengajuan Sewa</span>
+              <span className="text-[10px] font-bold text-slate-900 uppercase tracking-wider">Form Pengajuan Sewa</span>
               <h3 className="text-lg font-bold text-slate-900">{kost.name}</h3>
               <p className="text-xs text-slate-700">{kost.address}</p>
             </div>
@@ -157,7 +157,7 @@ Mohon segera diverifikasi ya min. Terima kasih!`
               </div>
               <div className="text-[11px] text-slate-700 flex justify-between pt-1 border-t border-[#e8e4db]">
                 <span>Total Transfer:</span>
-                <span className="font-bold text-[#0c8a7e] text-sm">
+                <span className="font-bold text-slate-900 text-sm">
                   Rp {Number(room.price_per_month).toLocaleString('id-ID')}
                 </span>
               </div>
@@ -218,7 +218,7 @@ Mohon segera diverifikasi ya min. Terima kasih!`
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-[#0c8a7e] hover:bg-[#097368] text-white font-bold py-2.5 rounded-lg shadow-sm transition disabled:opacity-50 text-xs"
+                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-lg shadow-sm transition disabled:opacity-50 text-xs"
               >
                 {isSubmitting ? 'Mengompres & Mengunggah Resi...' : 'Kirim Bukti Pembayaran'}
               </button>

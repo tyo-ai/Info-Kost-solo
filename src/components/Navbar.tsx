@@ -86,9 +86,8 @@ Mohon bantu proses pendataannya agar tampil di web. Terima kasih!`
                 {isAdmin ? (
                   <Link
                     href="/admin/dashboard"
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0c8a7e] bg-white border border-[#0c8a7e]/30 px-3 py-1.5 rounded-full hover:bg-[#0c8a7e]/10 transition whitespace-nowrap shadow-2xs"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-900 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-full hover:bg-amber-100 transition whitespace-nowrap shadow-2xs"
                   >
-                    <span className="w-2 h-2 rounded-full bg-[#0c8a7e] animate-pulse"></span>
                     <span>Dashboard Admin</span>
                   </Link>
                 ) : (
@@ -111,7 +110,7 @@ Mohon bantu proses pendataannya agar tampil di web. Terima kasih!`
               <button
                 type="button"
                 onClick={() => setIsAuthModalOpen(true)}
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-800 hover:text-[#0c8a7e] px-3.5 py-2 rounded-full hover:bg-white/80 transition whitespace-nowrap border border-transparent hover:border-[#e8e4db]"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-800 hover:text-slate-950 px-3.5 py-2 rounded-full hover:bg-white/80 transition whitespace-nowrap border border-transparent hover:border-[#e8e4db]"
               >
                 <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -120,14 +119,14 @@ Mohon bantu proses pendataannya agar tampil di web. Terima kasih!`
               </button>
             )}
 
-            {/* Tombol Titip / Daftar Kost via WhatsApp Berwarna Toska / Teal Elegan */}
+            {/* Tombol Titip / Daftar Kost via WhatsApp */}
             <a
               href={waUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 sm:gap-2 bg-[#0c8a7e] hover:bg-[#097368] text-white text-xs font-bold px-4 py-2 sm:py-2.5 rounded-full shadow-sm transition-all hover:shadow active:scale-95 whitespace-nowrap shrink-0"
+              className="inline-flex items-center gap-1.5 sm:gap-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2 sm:py-2.5 rounded-full shadow-sm transition-all hover:shadow active:scale-95 whitespace-nowrap shrink-0"
             >
-              <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 fill-emerald-400 shrink-0" viewBox="0 0 24 24">
                 <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
               </svg>
               <span className="hidden sm:inline">Titip / Daftar Kost</span>

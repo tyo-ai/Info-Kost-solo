@@ -138,7 +138,7 @@ Mohon informasinya ya min, terima kasih!`
                 onClose();
                 onProceedBooking(kost);
               }}
-              className="bg-[#0c8a7e] hover:bg-[#097368] text-white text-xs font-bold px-5 py-2.5 rounded-lg shadow-sm transition active:scale-95"
+              className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-5 py-2.5 rounded-lg shadow-sm transition active:scale-95"
             >
               Ajukan Sewa
             </button>

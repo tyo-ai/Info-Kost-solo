@@ -25,10 +25,10 @@ export default function Logo({ className = '', size = 'md', showText = true }: L
 
   return (
     <div className={`flex items-center gap-2.5 ${className}`}>
-      {/* Icon Graphic: Harmonisasi Atap Rumah/Joglo Solo + Pin Lokasi dengan Warna Toska / Teal Khas Rukita */}
-      <div className={`relative ${iconDimensions} rounded-xl bg-gradient-to-br from-[#0c8a7e] via-[#097368] to-[#065f56] p-0.5 shadow-md shadow-[#0c8a7e]/20 flex items-center justify-center overflow-hidden shrink-0 group`}>
+      {/* Icon Graphic: Harmonisasi Atap Rumah/Joglo Solo + Pin Lokasi dengan Warna Midnight Slate & Warm Gold */}
+      <div className={`relative ${iconDimensions} rounded-xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 p-0.5 shadow-md shadow-slate-900/10 flex items-center justify-center overflow-hidden shrink-0 group border border-slate-700/30`}>
         {/* Subtle glow / highlight */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/15 to-white/20 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-white/10 pointer-events-none" />
 
         <svg
           viewBox="0 0 48 48"
@@ -40,7 +40,7 @@ export default function Logo({ className = '', size = 'md', showText = true }: L
           <path
             d="M24 6L6 20H12V38C12 39.1046 12.8954 40 14 40H34C35.1046 40 36 39.1046 36 38V20H42L24 6Z"
             fill="white"
-            fillOpacity="0.2"
+            fillOpacity="0.15"
           />
           {/* Garis Atap Utama */}
           <path
@@ -59,7 +59,7 @@ export default function Logo({ className = '', size = 'md', showText = true }: L
             strokeLinejoin="round"
           />
           {/* Pin Lokasi Kuning Cerah di Puncak Atap */}
-          <circle cx="24" cy="7" r="2.5" fill="#FEF08A" />
+          <circle cx="24" cy="7" r="2.5" fill="#FBBF24" />
         </svg>
       </div>
 
@@ -67,7 +67,7 @@ export default function Logo({ className = '', size = 'md', showText = true }: L
       {showText && (
         <div className="flex flex-col leading-tight select-none">
           <span className={`font-black tracking-tight text-slate-900 ${textSizes.title}`}>
-            Info Kost <span className="text-[#0c8a7e]">Solo</span>
+            Info Kost <span className="text-amber-700">Solo</span>
           </span>
           <span className={`uppercase font-bold tracking-widest text-slate-500 -mt-0.5 ${textSizes.subtitle}`}>
             Surakarta Kost Network
