@@ -22,7 +22,21 @@ export default function KostRoomPanel({ kost, onBack, onSelectBooking }: KostRoo
     },
   ];
 
-  const rooms = (kost.rooms && kost.rooms.length > 0) ? kost.rooms : defaultRooms;
+  // Deduplikasi kamar: jika ada record kamar kembar/dobel, ambil 1 saja
+  const rooms = React.useMemo(() => {
+    const rawRooms = (kost.rooms && kost.rooms.length > 0) ? kost.rooms : defaultRooms;
+    const seen = new Set<string>();
+    const uniqueList: RoomItem[] = [];
+    for (const r of rawRooms) {
+      const key = (r.room_number || 'Kamar').trim().toLowerCase();
+      if (!seen.has(key)) {
+        seen.add(key);
+        uniqueList.push(r);
+      }
+    }
+    return uniqueList.length > 0 ? uniqueList : defaultRooms;
+  }, [kost.rooms]);
+
   const adminPhoneNumber = '6282146837575'; // Nomor WhatsApp Resmi Info Kost Solo (082146837575)
 
   // Template Pesan WhatsApp untuk Tanya Kost / Kamar

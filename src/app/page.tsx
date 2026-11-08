@@ -136,7 +136,22 @@ export default function CatalogPage() {
           `);
 
         if (!error && data && data.length > 0) {
-          setKosts(data as any);
+          // Bersihkan kamar ganda/dobel jika ada
+          const sanitizedKosts = data.map((item: any) => {
+            const seenRooms = new Set<string>();
+            const uniqueRooms = (item.rooms || []).filter((r: any) => {
+              const nameKey = (r.room_number || '').trim().toLowerCase();
+              if (seenRooms.has(nameKey)) return false;
+              seenRooms.add(nameKey);
+              return true;
+            });
+            return {
+              ...item,
+              rooms: uniqueRooms.length > 0 ? uniqueRooms : item.rooms,
+            };
+          });
+
+          setKosts(sanitizedKosts as any);
           setIsConnected(true);
         }
       } catch (e) {
