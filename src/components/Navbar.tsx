@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
+import Logo from '@/components/Logo';
 
 export default function Navbar() {
   const router = useRouter();
@@ -71,18 +72,8 @@ Mohon bantu proses pendataannya agar tampil di web. Terima kasih!`
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-9 h-9 rounded-lg bg-orange-700 flex items-center justify-center text-white font-bold text-lg shadow-sm">
-            K
-          </div>
-          <div className="flex flex-col">
-            <span className="font-extrabold text-lg tracking-tight text-slate-900 group-hover:text-orange-700 transition">
-              Info Kost <span className="text-orange-700">Solo</span>
-            </span>
-            <span className="text-[10px] uppercase font-semibold tracking-wider text-slate-600 -mt-1">
-              Surakarta Kost Network
-            </span>
-          </div>
+        <Link href="/" className="group transition hover:opacity-95">
+          <Logo size="md" />
         </Link>
 
         {/* Action Group */}
