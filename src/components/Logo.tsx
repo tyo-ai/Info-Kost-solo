@@ -77,3 +77,4 @@ export default function Logo({ className = '', size = 'md', showText = true }: L
     </div>
   );
 }
+

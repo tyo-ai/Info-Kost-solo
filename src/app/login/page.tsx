@@ -151,15 +151,15 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col text-slate-800">
-      {/* Navbar yang sama dengan Beranda */}
+      {/* Navbar tetap persis sama dengan Beranda */}
       <Navbar />
 
-      {/* Konten Login */}
-      <main className="flex-1 flex items-center justify-center px-4 py-10 sm:py-16">
+      {/* Konten Login - Menggunakan penempatan atas (pt) tetap agar posisi kartu TIDAK MELOMPAT */}
+      <main className="flex-1 flex justify-center pt-8 sm:pt-12 pb-16 px-4">
         <div className="w-full max-w-md">
           {/* Card Form */}
-          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xl shadow-slate-200/50 p-6 sm:p-8">
-            {/* Header Brand di dalam Card */}
+          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-lg shadow-slate-200/50 p-6 sm:p-8 transition-all">
+            {/* Header Brand di dalam Card - Posisi Terkunci */}
             <div className="text-center mb-6">
               <div className="flex justify-center mb-3">
                 <Logo size="lg" showText={false} />
@@ -167,14 +167,14 @@ export default function LoginPage() {
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                 {mode === 'login' ? 'Masuk ke Akun Anda' : 'Buat Akun Baru'}
               </h1>
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-slate-500 mt-1 h-8 flex items-center justify-center">
                 {mode === 'login'
                   ? 'Akses katalog kamar dan portal pengelolaan Info Kost Solo'
                   : 'Daftar untuk kemudahan pemesanan kamar kost di Surakarta'}
               </p>
             </div>
 
-            {/* Tab Navigasi Masuk / Daftar */}
+            {/* Tab Navigasi Masuk / Daftar - Posisi Kordinat Terkunci */}
             <div className="flex bg-slate-100 p-1 rounded-xl mb-6">
               <button
                 type="button"
