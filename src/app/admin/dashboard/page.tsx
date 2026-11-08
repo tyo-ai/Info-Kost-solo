@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Navbar from '@/components/Navbar';
+import { useRouter } from 'next/navigation';
 import MapPicker from '@/components/MapPicker';
 import { supabase } from '@/lib/supabaseClient';
 import { compressImage } from '@/lib/imageCompressor';
+import Link from 'next/link';
 
 interface BookingQueueItem {
   id: number;
@@ -26,6 +27,12 @@ interface BookingQueueItem {
 }
 
 export default function AdminDashboardPage() {
+  const router = useRouter();
+
+  // Auth State
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
   // Form State
   const [name, setName] = useState('');
   const [type, setType] = useState('campur');
@@ -45,6 +52,41 @@ export default function AdminDashboardPage() {
   const [activeProofModal, setActiveProofModal] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
+  // ─── Cek Sesi Login ───────────────────────────────────────────
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        router.replace('/login');
+      } else if (session.user.email?.toLowerCase() !== 'kostsoloadmin@gmail.com') {
+        // User biasa tidak boleh akses admin dashboard
+        router.replace('/');
+      } else {
+        setUserEmail(session.user.email ?? null);
+        setAuthLoading(false);
+        fetchBookings();
+      }
+    });
+
+    // Listener jika session berubah (logout di tab lain, dsb)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        router.replace('/login');
+      } else if (session.user.email?.toLowerCase() !== 'kostsoloadmin@gmail.com') {
+        router.replace('/');
+      } else {
+        setUserEmail(session.user.email ?? null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [router]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.replace('/login');
+  };
+
+  // ─── Fetch Bookings ───────────────────────────────────────────
   const fetchBookings = async () => {
     try {
       const { data, error } = await supabase
@@ -69,10 +111,6 @@ export default function AdminDashboardPage() {
       console.info('Koneksi Supabase belum aktif atau menggunakan local state');
     }
   };
-
-  useEffect(() => {
-    fetchBookings();
-  }, []);
 
   const handleCreateKost = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -149,9 +187,61 @@ export default function AdminDashboardPage() {
     }
   };
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-center space-y-3">
+          <div className="animate-spin w-10 h-10 rounded-full border-2 border-orange-700 border-t-transparent mx-auto"></div>
+          <p className="text-xs text-slate-500 font-medium">Memverifikasi sesi login...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800">
-      <Navbar />
+      {/* Navbar Admin Custom */}
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="w-9 h-9 rounded-lg bg-orange-700 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+              K
+            </div>
+            <div className="flex flex-col">
+              <span className="font-extrabold text-lg tracking-tight text-slate-900 group-hover:text-orange-700 transition">
+                Info Kost <span className="text-orange-700">Solo</span>
+              </span>
+              <span className="text-[10px] uppercase font-semibold tracking-wider text-slate-600 -mt-1">
+                Admin Dashboard
+              </span>
+            </div>
+          </Link>
+
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-2 text-xs text-slate-600 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-full">
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span className="font-medium truncate max-w-[180px]">{userEmail}</span>
+            </div>
+
+            <Link
+              href="/"
+              className="text-xs font-semibold text-slate-600 hover:text-slate-900 px-3 py-2 rounded-lg hover:bg-slate-100 transition hidden sm:inline-block"
+            >
+              Lihat Katalog
+            </Link>
+
+            <button
+              onClick={handleLogout}
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-rose-700 hover:text-rose-900 bg-rose-50 hover:bg-rose-100 border border-rose-200 px-3 py-2 rounded-lg transition"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              <span>Keluar</span>
+            </button>
+          </div>
+        </div>
+      </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8 border-b border-slate-200 pb-4">
