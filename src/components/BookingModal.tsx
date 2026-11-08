@@ -78,11 +78,14 @@ export default function BookingModal({ kost, selectedRoom, onClose }: BookingMod
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
       <div className="bg-white rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl relative my-8">
+        {/* Tombol Tanda Silang (✕) Kembali yang Jelas */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-600 hover:text-slate-800 text-sm font-bold p-1 rounded-lg hover:bg-slate-100"
+          type="button"
+          aria-label="Tutup dan kembali"
+          className="absolute top-4 right-4 w-9 h-9 rounded-full bg-[#f6f3eb] hover:bg-[#eae5d8] text-slate-700 hover:text-slate-900 flex items-center justify-center text-sm font-bold shadow-xs transition group z-10"
         >
-          ✕
+          <span className="group-hover:rotate-90 transition-transform duration-200">✕</span>
         </button>
 
         {isSuccess ? (
@@ -134,17 +137,17 @@ Mohon segera diverifikasi ya min. Terima kasih!`
         ) : (
           <>
             <div>
-              <span className="text-[10px] font-bold text-orange-700 uppercase tracking-wider">Form Pengajuan Sewa</span>
+              <span className="text-[10px] font-bold text-[#0c8a7e] uppercase tracking-wider">Form Pengajuan Sewa</span>
               <h3 className="text-lg font-bold text-slate-900">{kost.name}</h3>
               <p className="text-xs text-slate-700">{kost.address}</p>
             </div>
 
             {/* Rekening Tujuan Transfer Manual */}
-            <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-xl space-y-1.5 text-xs">
+            <div className="bg-[#f6f3eb] border border-[#e8e4db] p-3.5 rounded-xl space-y-1.5 text-xs">
               <span className="font-semibold text-slate-700 text-[11px] block">Instruksi Pembayaran Manual:</span>
               <div className="flex justify-between items-center text-slate-900 font-medium">
                 <span>Bank Central Asia (BCA)</span>
-                <span className="font-mono font-bold bg-white px-2 py-0.5 rounded border border-slate-200 text-slate-800">
+                <span className="font-mono font-bold bg-white px-2 py-0.5 rounded border border-[#e2ded4] text-slate-800">
                   0158-923-120
                 </span>
               </div>
@@ -152,9 +155,9 @@ Mohon segera diverifikasi ya min. Terima kasih!`
                 <span>Atas Nama:</span>
                 <span className="font-semibold text-slate-800">Info Kost Solo Official</span>
               </div>
-              <div className="text-[11px] text-slate-700 flex justify-between pt-1 border-t border-slate-200">
+              <div className="text-[11px] text-slate-700 flex justify-between pt-1 border-t border-[#e8e4db]">
                 <span>Total Transfer:</span>
-                <span className="font-bold text-orange-700 text-sm">
+                <span className="font-bold text-[#0c8a7e] text-sm">
                   Rp {Number(room.price_per_month).toLocaleString('id-ID')}
                 </span>
               </div>
@@ -215,7 +218,7 @@ Mohon segera diverifikasi ya min. Terima kasih!`
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-orange-700 hover:bg-orange-800 text-white font-bold py-2.5 rounded-lg shadow-sm transition disabled:opacity-50 text-xs"
+                className="w-full bg-[#0c8a7e] hover:bg-[#097368] text-white font-bold py-2.5 rounded-lg shadow-sm transition disabled:opacity-50 text-xs"
               >
                 {isSubmitting ? 'Mengompres & Mengunggah Resi...' : 'Kirim Bukti Pembayaran'}
               </button>

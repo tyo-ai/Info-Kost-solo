@@ -45,10 +45,10 @@ export default function PropertyCard({
   return (
     <div
       id={`kost-card-${kost.id}`}
-      className={`group bg-white rounded-xl border transition-all duration-200 flex flex-col ${
+      className={`group bg-white rounded-2xl border transition-all duration-200 flex flex-col overflow-hidden ${
         isSelected
-          ? 'border-orange-600 ring-2 ring-orange-500 shadow-md scale-[1.01]'
-          : 'border-slate-200 hover:border-slate-300'
+          ? 'border-[#0c8a7e] ring-2 ring-[#0c8a7e]/40 shadow-lg scale-[1.01]'
+          : 'border-[#e8e4db] hover:border-[#0c8a7e]/40 shadow-xs hover:shadow-md'
       }`}
     >
       {/* Container Gambar Rasio 16:10 */}
@@ -83,7 +83,7 @@ export default function PropertyCard({
         </div>
 
         {isSelected && (
-          <div className="absolute top-3 right-3 bg-orange-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow">
+          <div className="absolute top-3 right-3 bg-[#0c8a7e] text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow">
             ● Terpilih di Peta
           </div>
         )}
@@ -94,12 +94,12 @@ export default function PropertyCard({
         <div>
           <h3
             onClick={() => onSelectDetail(kost)}
-            className="font-bold text-slate-900 text-base leading-snug group-hover:text-orange-700 transition cursor-pointer"
+            className="font-bold text-slate-900 text-base leading-snug group-hover:text-[#0c8a7e] transition cursor-pointer"
           >
             {kost.name}
           </h3>
           <p className="text-xs text-slate-600 mt-1 flex items-center gap-1.5">
-            <svg className="w-3.5 h-3.5 text-orange-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-3.5 h-3.5 text-[#0c8a7e] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
@@ -119,13 +119,13 @@ export default function PropertyCard({
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => onSelectDetail(kost)}
-              className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-2.5 py-2 rounded-lg transition"
+              className="bg-[#f6f3eb] hover:bg-[#eae5d8] text-slate-700 text-xs font-semibold px-2.5 py-2 rounded-lg transition border border-[#e8e4db]"
             >
               Cek Kamar
             </button>
             <button
               onClick={() => onSelectBooking(kost)}
-              className="bg-orange-700 hover:bg-orange-800 text-white text-xs font-bold px-3 py-2 rounded-lg shadow-sm transition active:scale-95"
+              className="bg-[#0c8a7e] hover:bg-[#097368] text-white text-xs font-bold px-3 py-2 rounded-lg shadow-2xs transition active:scale-95"
             >
               Ajukan Sewa
             </button>

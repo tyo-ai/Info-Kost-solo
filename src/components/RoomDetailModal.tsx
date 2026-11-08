@@ -48,12 +48,14 @@ Mohon informasinya ya min, terima kasih!`
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
       <div className="bg-white rounded-2xl max-w-xl w-full p-6 space-y-5 shadow-2xl relative my-8">
-        {/* Tombol Tutup */}
+        {/* Tombol Tanda Silang (✕) Tutup & Kembali */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-500 hover:text-slate-800 text-sm font-bold p-1 rounded-lg hover:bg-slate-100 transition"
+          type="button"
+          aria-label="Tutup dan kembali"
+          className="absolute top-4 right-4 w-9 h-9 rounded-full bg-[#f6f3eb] hover:bg-[#eae5d8] text-slate-700 hover:text-slate-900 flex items-center justify-center text-sm font-bold shadow-xs transition group z-10"
         >
-          ✕
+          <span className="group-hover:rotate-90 transition-transform duration-200">✕</span>
         </button>
 
         {/* Gambar Properti */}
@@ -142,7 +144,7 @@ Mohon informasinya ya min, terima kasih!`
                 onClose();
                 onProceedBooking(kost);
               }}
-              className="bg-orange-700 hover:bg-orange-800 text-white text-xs font-bold px-5 py-2.5 rounded-lg shadow-sm transition active:scale-95"
+              className="bg-[#0c8a7e] hover:bg-[#097368] text-white text-xs font-bold px-5 py-2.5 rounded-lg shadow-sm transition active:scale-95"
             >
               Ajukan Sewa
             </button>

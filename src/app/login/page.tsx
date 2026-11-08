@@ -69,7 +69,7 @@ export default function LoginPage() {
         return;
       }
 
-      // Berhasil login -> Arahkan berdasarkan peran
+      // Berhasil login
       if (cleanEmail === 'kostsoloadmin@gmail.com') {
         router.replace('/admin/dashboard');
       } else {
@@ -140,9 +140,9 @@ export default function LoginPage() {
 
   if (checkingSession) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#faf8f5] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="animate-spin w-8 h-8 rounded-full border-2 border-orange-700 border-t-transparent" />
+          <div className="animate-spin w-8 h-8 rounded-full border-2 border-[#0c8a7e] border-t-transparent" />
           <span className="text-xs text-slate-500 font-medium">Memuat portal...</span>
         </div>
       </div>
@@ -150,17 +150,27 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col text-slate-800">
-      {/* Navbar tetap persis sama dengan Beranda */}
+    <div className="min-h-screen bg-[#faf8f5] flex flex-col text-slate-800">
+      {/* Navbar Rukita Theme */}
       <Navbar />
 
-      {/* Konten Login - Menggunakan penempatan atas (pt) tetap agar posisi kartu TIDAK MELOMPAT */}
+      {/* Konten Login */}
       <main className="flex-1 flex justify-center pt-8 sm:pt-12 pb-16 px-4">
         <div className="w-full max-w-md">
           {/* Card Form */}
-          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-lg shadow-slate-200/50 p-6 sm:p-8 transition-all">
-            {/* Header Brand di dalam Card - Posisi Terkunci */}
-            <div className="text-center mb-6">
+          <div className="bg-white rounded-3xl border border-[#e8e4db] shadow-xl shadow-slate-200/50 p-6 sm:p-8 transition-all relative">
+            {/* Tombol Tanda Silang (✕) di Pojok Kanan Atas */}
+            <Link
+              href="/"
+              title="Kembali ke Beranda"
+              aria-label="Tutup dan kembali ke beranda"
+              className="absolute top-4 right-4 sm:top-5 sm:right-5 w-9 h-9 rounded-full bg-[#f6f3eb] hover:bg-[#eae5d8] text-slate-600 hover:text-slate-900 flex items-center justify-center text-sm font-bold transition shadow-2xs group"
+            >
+              <span className="group-hover:rotate-90 transition-transform duration-200">✕</span>
+            </Link>
+
+            {/* Header Brand */}
+            <div className="text-center mb-6 pt-1">
               <div className="flex justify-center mb-3">
                 <Logo size="lg" showText={false} />
               </div>
@@ -169,13 +179,13 @@ export default function LoginPage() {
               </h1>
               <p className="text-xs text-slate-500 mt-1 h-8 flex items-center justify-center">
                 {mode === 'login'
-                  ? 'Akses katalog kamar dan portal pengelolaan Info Kost Solo'
-                  : 'Daftar untuk kemudahan pemesanan kamar kost di Surakarta'}
+                  ? 'Akses katalog kamar dan portal Info Kost Solo'
+                  : 'Daftar untuk kemudahan pemesanan hunian kost di Surakarta'}
               </p>
             </div>
 
-            {/* Tab Navigasi Masuk / Daftar - Posisi Kordinat Terkunci */}
-            <div className="flex bg-slate-100 p-1 rounded-xl mb-6">
+            {/* Tab Navigasi Masuk / Daftar */}
+            <div className="flex bg-[#f6f3eb] p-1 rounded-xl mb-6 border border-[#e8e4db]">
               <button
                 type="button"
                 onClick={() => {
@@ -185,7 +195,7 @@ export default function LoginPage() {
                 }}
                 className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
                   mode === 'login'
-                    ? 'bg-white text-orange-700 shadow-sm'
+                    ? 'bg-[#0c8a7e] text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -200,7 +210,7 @@ export default function LoginPage() {
                 }}
                 className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
                   mode === 'register'
-                    ? 'bg-white text-orange-700 shadow-sm'
+                    ? 'bg-[#0c8a7e] text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -250,7 +260,7 @@ export default function LoginPage() {
                       onChange={(e) => setEmail(e.target.value)}
                       required
                       placeholder="nama@email.com"
-                      className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-600/30 focus:border-orange-600 bg-white transition"
+                      className="w-full pl-10 pr-4 py-2.5 border border-[#e2ded4] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0c8a7e]/20 focus:border-[#0c8a7e] bg-white transition"
                     />
                   </div>
                 </div>
@@ -279,7 +289,7 @@ export default function LoginPage() {
                       onChange={(e) => setPassword(e.target.value)}
                       required
                       placeholder="Masukkan kata sandi"
-                      className="w-full pl-10 pr-10 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-600/30 focus:border-orange-600 bg-white transition"
+                      className="w-full pl-10 pr-10 py-2.5 border border-[#e2ded4] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0c8a7e]/20 focus:border-[#0c8a7e] bg-white transition"
                     />
                     <button
                       type="button"
@@ -295,7 +305,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full mt-2 bg-orange-700 hover:bg-orange-800 disabled:bg-orange-400 text-white font-bold py-2.5 rounded-xl shadow-sm transition active:scale-[0.99] flex items-center justify-center gap-2 text-sm"
+                  className="w-full mt-2 bg-[#0c8a7e] hover:bg-[#097368] disabled:bg-[#0c8a7e]/50 text-white font-bold py-2.5 rounded-xl shadow-xs transition active:scale-[0.99] flex items-center justify-center gap-2 text-sm"
                 >
                   {isLoading ? (
                     <>
@@ -319,7 +329,7 @@ export default function LoginPage() {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="Contoh: Budi Pratama"
-                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-600/30 focus:border-orange-600 bg-white transition"
+                    className="w-full px-3.5 py-2.5 border border-[#e2ded4] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0c8a7e]/20 focus:border-[#0c8a7e] bg-white transition"
                   />
                 </div>
 
@@ -333,7 +343,7 @@ export default function LoginPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     placeholder="nama@email.com"
-                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-600/30 focus:border-orange-600 bg-white transition"
+                    className="w-full px-3.5 py-2.5 border border-[#e2ded4] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0c8a7e]/20 focus:border-[#0c8a7e] bg-white transition"
                   />
                 </div>
 
@@ -347,7 +357,7 @@ export default function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     placeholder="Minimal 6 karakter"
-                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-600/30 focus:border-orange-600 bg-white transition"
+                    className="w-full px-3.5 py-2.5 border border-[#e2ded4] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0c8a7e]/20 focus:border-[#0c8a7e] bg-white transition"
                   />
                 </div>
 
@@ -361,14 +371,14 @@ export default function LoginPage() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
                     placeholder="Ulangi kata sandi"
-                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-600/30 focus:border-orange-600 bg-white transition"
+                    className="w-full px-3.5 py-2.5 border border-[#e2ded4] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#0c8a7e]/20 focus:border-[#0c8a7e] bg-white transition"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full mt-2 bg-orange-700 hover:bg-orange-800 disabled:bg-orange-400 text-white font-bold py-2.5 rounded-xl shadow-sm transition active:scale-[0.99] flex items-center justify-center gap-2 text-sm"
+                  className="w-full mt-2 bg-[#0c8a7e] hover:bg-[#097368] disabled:bg-[#0c8a7e]/50 text-white font-bold py-2.5 rounded-xl shadow-xs transition active:scale-[0.99] flex items-center justify-center gap-2 text-sm"
                 >
                   {isLoading ? (
                     <>
@@ -383,12 +393,12 @@ export default function LoginPage() {
             )}
 
             {/* Back link */}
-            <div className="mt-6 pt-5 border-t border-slate-100 text-center">
+            <div className="mt-6 pt-5 border-t border-[#f0ede6] text-center">
               <Link
                 href="/"
-                className="text-xs text-slate-500 hover:text-orange-700 font-semibold transition inline-flex items-center gap-1.5"
+                className="text-xs text-slate-500 hover:text-slate-800 font-semibold transition inline-flex items-center gap-1.5"
               >
-                <span>← Kembali ke Katalog Kost</span>
+                <span>✕ Kembali ke Katalog Kost</span>
               </Link>
             </div>
           </div>

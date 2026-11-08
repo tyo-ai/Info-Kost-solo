@@ -178,7 +178,7 @@ export default function CatalogPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col text-slate-800">
+    <div className="min-h-screen bg-[#faf8f5] flex flex-col text-slate-800">
       <Navbar />
 
       {/* Main Container Split Screen */}
@@ -189,18 +189,18 @@ export default function CatalogPage() {
             <div className="flex items-center gap-2">
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Katalog Kost Surakarta</h1>
               {isConnected ? (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#0c8a7e]/10 text-[#0c8a7e] border border-[#0c8a7e]/20">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0c8a7e] animate-pulse"></span>
                   Supabase Terhubung
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-amber-50 text-amber-800 border border-amber-200">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-[#f6f3eb] text-slate-700 border border-[#e8e4db]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
                   Demo Lokal
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-600">
+            <p className="text-xs text-slate-600 mt-0.5">
               Temukan hunian sewa dekat kampus UNS, UMS, Manahan, dan stasiun di Solo. Klik titik peta di kanan untuk langsung melihat kamar di kiri.
             </p>
           </div>
@@ -213,15 +213,15 @@ export default function CatalogPage() {
                 placeholder="Cari UNS, UMS, Jebres..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 text-xs bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-orange-700 shadow-2xs"
+                className="w-full pl-8 pr-3 py-2 text-xs bg-white border border-[#e8e4db] rounded-full focus:outline-none focus:ring-1 focus:ring-[#0c8a7e] shadow-2xs"
               />
-              <svg className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
 
             {/* Filter Gender/Tipe */}
-            <div className="inline-flex p-1 bg-white border border-slate-200 rounded-xl shadow-2xs">
+            <div className="inline-flex p-1 bg-white border border-[#e8e4db] rounded-full shadow-2xs">
               {['semua', 'putra', 'putri', 'campur'].map((t) => (
                 <button
                   key={t}
@@ -229,10 +229,10 @@ export default function CatalogPage() {
                     setFilterType(t);
                     setSelectedKostId(null);
                   }}
-                  className={`px-3 py-1 rounded-lg text-xs font-semibold capitalize transition ${
+                  className={`px-3 py-1 rounded-full text-xs font-semibold capitalize transition ${
                     filterType === t
-                      ? 'bg-orange-700 text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                      ? 'bg-[#0c8a7e] text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-[#f6f3eb]'
                   }`}
                 >
                   {t}
