@@ -218,16 +218,20 @@ export default function AdminDashboardPage() {
         .select()
         .single();
 
-      if (kostError && kostError.message?.includes('images')) {
-        // Fallback tabel tanpa kolom `images`
-        delete payload.images;
-        const fallbackRes = await supabase
-          .from('kosts')
-          .insert(payload)
-          .select()
-          .single();
-        data = fallbackRes.data;
-        kostError = fallbackRes.error;
+      if (kostError) {
+        console.error('Insert error:', kostError.message);
+        if (kostError.message?.includes('images') || kostError.message?.includes('column')) {
+          // Fallback: kolom images belum ada di Supabase, simpan tanpa images
+          console.warn('Kolom images belum ada di Supabase. Jalankan migrasi SQL di Supabase Dashboard!');
+          delete payload.images;
+          const fallbackRes = await supabase
+            .from('kosts')
+            .insert(payload)
+            .select()
+            .single();
+          data = fallbackRes.data;
+          kostError = fallbackRes.error;
+        }
       }
 
       if (kostError) throw kostError;
