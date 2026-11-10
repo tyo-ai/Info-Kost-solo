@@ -120,6 +120,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
       }
 
       if (data.session) {
+        // Otomatis langsung login jika auto-confirm aktif di Supabase
         setIsLoading(false);
         onClose();
         if (cleanEmail === 'kostsoloadmin@gmail.com') {
@@ -129,11 +130,28 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
           router.refresh();
         }
       } else {
-        setSuccessMsg(
-          'Pendaftaran berhasil! Akun Anda telah dibuat. Silakan masuk menggunakan email dan kata sandi Anda.'
-        );
-        setMode('login');
-        setIsLoading(false);
+        // Jika session belum ada, coba auto sign in seketika dengan password yang baru didaftarkan
+        const { error: autoSignInError } = await supabase.auth.signInWithPassword({
+          email: cleanEmail,
+          password,
+        });
+
+        if (!autoSignInError) {
+          setIsLoading(false);
+          onClose();
+          if (cleanEmail === 'kostsoloadmin@gmail.com') {
+            router.push('/admin/dashboard');
+          } else {
+            if (onSuccess) onSuccess();
+            router.refresh();
+          }
+        } else {
+          setSuccessMsg(
+            'Pendaftaran berhasil! Akun Anda telah aktif, silakan masuk.'
+          );
+          setMode('login');
+          setIsLoading(false);
+        }
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Terjadi kesalahan sistem';

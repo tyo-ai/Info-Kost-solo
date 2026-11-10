@@ -132,11 +132,25 @@ export default function LoginPage() {
           router.replace('/');
         }
       } else {
-        setSuccessMsg(
-          'Pendaftaran berhasil! Akun Anda telah dibuat. Silakan masuk menggunakan email dan sandi Anda.'
-        );
-        setMode('login');
-        setIsLoading(false);
+        // Coba auto login seketika setelah register
+        const { error: autoSignInError } = await supabase.auth.signInWithPassword({
+          email: cleanEmail,
+          password,
+        });
+
+        if (!autoSignInError) {
+          if (cleanEmail === 'kostsoloadmin@gmail.com') {
+            router.replace('/admin/dashboard');
+          } else {
+            router.replace('/');
+          }
+        } else {
+          setSuccessMsg(
+            'Pendaftaran berhasil! Akun Anda telah aktif, silakan masuk.'
+          );
+          setMode('login');
+          setIsLoading(false);
+        }
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Terjadi kesalahan sistem';
