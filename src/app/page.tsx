@@ -174,7 +174,23 @@ export default function CatalogPage() {
         }
 
         if (rawData && rawData.length > 0) {
-          // Bersihkan kamar ganda/dobel jika ada & pastikan images array tersedia
+          // Buat kamus foto galeri berdasarkan nama kost preset
+          const presetPhotoMap: Record<string, string[]> = {};
+          DUMMY_SOLO_KOSTS.forEach((dk) => {
+            if (dk.name && dk.images) {
+              presetPhotoMap[dk.name.toLowerCase().trim()] = dk.images;
+            }
+          });
+
+          // Foto pelengkap standar interior kamar kost
+          const fallbackRoomSet = [
+            'https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1554995207-c18c20360250?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80',
+          ];
+
+          // Bersihkan kamar ganda/dobel jika ada & pastikan images array selalu terisi lengkap
           const sanitizedKosts = rawData.map((item: any) => {
             const seenRooms = new Set<string>();
             const uniqueRooms = (item.rooms || []).filter((r: any) => {
@@ -183,9 +199,25 @@ export default function CatalogPage() {
               seenRooms.add(nameKey);
               return true;
             });
-            const photoList = Array.isArray(item.images) && item.images.length > 0
-              ? item.images
-              : (item.image_url ? [item.image_url] : []);
+
+            // Resolusi foto slide kamar
+            let photoList: string[] = [];
+            const itemKey = (item.name || '').toLowerCase().trim();
+
+            if (Array.isArray(item.images) && item.images.length > 1) {
+              photoList = item.images;
+            } else if (presetPhotoMap[itemKey]) {
+              photoList = presetPhotoMap[itemKey];
+            } else if (item.image_url) {
+              photoList = [
+                item.image_url,
+                fallbackRoomSet[1],
+                fallbackRoomSet[2],
+                fallbackRoomSet[3],
+              ];
+            } else {
+              photoList = fallbackRoomSet;
+            }
 
             return {
               ...item,

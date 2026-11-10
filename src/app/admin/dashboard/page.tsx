@@ -125,7 +125,7 @@ export default function AdminDashboardPage() {
     setPreviewUrls((prev) => {
       try {
         URL.revokeObjectURL(prev[indexToRemove]);
-      } catch (_) {}
+      } catch (_) { }
       return prev.filter((_, i) => i !== indexToRemove);
     });
   };
@@ -236,7 +236,7 @@ export default function AdminDashboardPage() {
       previewUrls.forEach((url) => {
         try {
           URL.revokeObjectURL(url);
-        } catch (_) {}
+        } catch (_) { }
       });
       setImageFiles([]);
       setPreviewUrls([]);
@@ -490,7 +490,7 @@ export default function AdminDashboardPage() {
                         type="button"
                         onClick={() => {
                           previewUrls.forEach((u) => {
-                            try { URL.revokeObjectURL(u); } catch (_) {}
+                            try { URL.revokeObjectURL(u); } catch (_) { }
                           });
                           setImageFiles([]);
                           setPreviewUrls([]);
@@ -588,8 +588,8 @@ export default function AdminDashboardPage() {
                           <p className="text-slate-500 text-[11px]">Kamar: {item.rooms?.room_number} • Rp {Number(item.rooms?.price_per_month || 0).toLocaleString('id-ID')}/bln</p>
                         </div>
                         <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${item.status === 'lunas' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' :
-                            item.status === 'menunggu_verifikasi' ? 'bg-amber-50 text-amber-900 border border-amber-200' :
-                              item.status === 'ditolak' ? 'bg-rose-50 text-rose-800 border border-rose-200' : 'bg-slate-100 text-slate-600'
+                          item.status === 'menunggu_verifikasi' ? 'bg-amber-50 text-amber-900 border border-amber-200' :
+                            item.status === 'ditolak' ? 'bg-rose-50 text-rose-800 border border-rose-200' : 'bg-slate-100 text-slate-600'
                           }`}>
                           {item.status.replace('_', ' ')}
                         </span>
