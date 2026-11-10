@@ -37,14 +37,9 @@ Mohon informasinya ya min, terima kasih!`
   );
   const waUrl = `https://wa.me/${adminPhoneNumber}?text=${waMessage}`;
 
-  const facilities = [
-    'Kamar Mandi Dalam',
-    'Kasur Springbed',
-    'Air Conditioner (AC)',
-    'WiFi Internet Cepat',
-    'Meja & Lemari Pakaian',
-    'Parkir Motor Aman & Berpagar',
-  ];
+  const facilities = Array.isArray(room.facilities) && room.facilities.length > 0
+    ? room.facilities
+    : ['Kamar Mandi Dalam', 'Kasur Springbed', 'AC', 'WiFi Internet', 'Meja & Lemari'];
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
