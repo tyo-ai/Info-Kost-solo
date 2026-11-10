@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { compressImage } from '@/lib/imageCompressor';
 import Link from 'next/link';
 import Logo from '@/components/Logo';
+import ImageCropperModal from '@/components/ImageCropperModal';
 
 interface BookingQueueItem {
   id: number;
@@ -49,6 +50,9 @@ export default function AdminDashboardPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formSuccess, setFormSuccess] = useState('');
   const [facilitiesText, setFacilitiesText] = useState('Kamar Mandi Dalam, Kasur Springbed, AC, WiFi Cepat, Lemari & Meja');
+
+  // Cropper State
+  const [cropTargetIndex, setCropTargetIndex] = useState<number | null>(null);
 
   // Antrean Verifikasi
   const [bookings, setBookings] = useState<BookingQueueItem[]>([]);
@@ -159,6 +163,37 @@ export default function AdminDashboardPage() {
       next.unshift(selected);
       return next;
     });
+  };
+
+  // Handler saat crop selesai untuk foto tertentu
+  const handleCropComplete = (croppedBlob: Blob, croppedUrl: string) => {
+    if (cropTargetIndex === null) return;
+    const idx = cropTargetIndex;
+
+    // Convert blob to File
+    const originalFile = imageFiles[idx];
+    const newFileName = originalFile ? originalFile.name.replace(/\.[^/.]+$/, "") + ".webp" : `photo-${Date.now()}.webp`;
+    const croppedFile = new File([croppedBlob], newFileName, {
+      type: 'image/webp',
+      lastModified: Date.now(),
+    });
+
+    setImageFiles((prev) => {
+      const next = [...prev];
+      next[idx] = croppedFile;
+      return next;
+    });
+
+    setPreviewUrls((prev) => {
+      const next = [...prev];
+      try {
+        URL.revokeObjectURL(next[idx]);
+      } catch (_) {}
+      next[idx] = croppedUrl;
+      return next;
+    });
+
+    setCropTargetIndex(null);
   };
 
   const handleCreateKost = async (e: React.FormEvent) => {
@@ -621,6 +656,17 @@ export default function AdminDashboardPage() {
                             </button>
                           )}
 
+                          {/* Tombol Crop / Atur Posisi (16:9) */}
+                          <button
+                            type="button"
+                            onClick={() => setCropTargetIndex(idx)}
+                            title="Atur Posisi & Crop Foto (Rasio Tetap 16:9)"
+                            className="absolute top-1.5 right-8 px-2 py-0.5 rounded-full bg-black/70 hover:bg-slate-900 text-white text-[10px] font-bold transition shadow-xs flex items-center gap-1 backdrop-blur-xs cursor-pointer"
+                          >
+                            <span>✂️</span>
+                            <span className="hidden sm:inline">Atur Crop</span>
+                          </button>
+
                           {/* Tombol Hapus Silang (✕) */}
                           <button
                             type="button"
@@ -753,6 +799,16 @@ export default function AdminDashboardPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Pop-up Modal Atur Posisi / Crop Foto (Rasio Tetap 16:9) */}
+      {cropTargetIndex !== null && previewUrls[cropTargetIndex] && (
+        <ImageCropperModal
+          imageUrl={previewUrls[cropTargetIndex]}
+          onCropComplete={handleCropComplete}
+          onCancel={() => setCropTargetIndex(null)}
+          aspectRatio={16 / 9}
+        />
       )}
     </div>
   );
