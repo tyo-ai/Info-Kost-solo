@@ -56,14 +56,21 @@ export default function LoginPage() {
       });
 
       if (signInError) {
-        if (signInError.message.includes('Email not confirmed')) {
+        console.error('Supabase Sign In Error:', signInError);
+        if (
+          signInError.message.toLowerCase().includes('email not confirmed') ||
+          signInError.message.toLowerCase().includes('not confirmed')
+        ) {
           setError(
-            'Email belum dikonfirmasi. Periksa kotak masuk email Anda atau konfirmasi via Supabase.'
+            'Email belum dikonfirmasi! Buka email Anda untuk klik link konfirmasi, atau matikan "Confirm email" di pengaturan Supabase.'
           );
-        } else if (signInError.message.includes('Invalid login credentials')) {
-          setError('Email atau kata sandi tidak cocok. Silakan periksa kembali.');
+        } else if (
+          signInError.message.toLowerCase().includes('invalid login credentials') ||
+          signInError.message.toLowerCase().includes('invalid_grant')
+        ) {
+          setError('Email atau kata sandi tidak cocok. Silakan periksa kembali ketikan sandi Anda.');
         } else {
-          setError('Gagal masuk: ' + signInError.message);
+          setError(signInError.message);
         }
         setIsLoading(false);
         return;
