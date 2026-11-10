@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { PropertyItem } from './PropertyCard';
+import ImageSlider from './ImageSlider';
 
 interface RoomDetailModalProps {
   kost: PropertyItem | null;
@@ -58,28 +59,33 @@ Mohon informasinya ya min, terima kasih!`
           <span className="group-hover:rotate-90 transition-transform duration-200">✕</span>
         </button>
 
-        {/* Gambar Properti */}
-        <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
-          <img
-            src={kost.image_url || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80'}
-            alt={kost.name}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute top-3 left-3 flex gap-1.5">
-            <span className={`px-2.5 py-1 rounded-md text-[11px] font-bold uppercase shadow-sm ${
-              kost.type === 'putra'
-                ? 'bg-sky-50 text-sky-800 border border-sky-200'
-                : kost.type === 'putri'
-                ? 'bg-rose-50 text-rose-800 border border-rose-200'
-                : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-            }`}>
-              Kost {kost.type}
-            </span>
-            <span className="bg-slate-900/80 backdrop-blur-sm text-white px-2 py-1 rounded-md text-[10px] font-medium">
-              Kec. {kost.subdistrict}
-            </span>
-          </div>
-        </div>
+        {/* Slide Foto Kamar & Properti dengan Rasio Tetap */}
+        <ImageSlider
+          images={
+            kost.images && kost.images.length > 0
+              ? kost.images
+              : [kost.image_url || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80']
+          }
+          alt={kost.name}
+          aspectRatio="16/9"
+          showThumbnails={true}
+          badges={
+            <>
+              <span className={`px-2.5 py-1 rounded-md text-[11px] font-bold uppercase shadow-sm ${
+                kost.type === 'putra'
+                  ? 'bg-sky-50 text-sky-800 border border-sky-200'
+                  : kost.type === 'putri'
+                  ? 'bg-rose-50 text-rose-800 border border-rose-200'
+                  : 'bg-amber-50 text-amber-900 border border-amber-200'
+              }`}>
+                Kost {kost.type}
+              </span>
+              <span className="bg-slate-900/80 backdrop-blur-sm text-white px-2 py-1 rounded-md text-[10px] font-medium">
+                Kec. {kost.subdistrict}
+              </span>
+            </>
+          }
+        />
 
         {/* Info Header */}
         <div>

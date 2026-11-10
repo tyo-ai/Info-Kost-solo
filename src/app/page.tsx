@@ -19,6 +19,12 @@ const DUMMY_SOLO_KOSTS: PropertyItem[] = [
     address: 'Jl. Surya Utama No. 14, Kentingan, Jebres, Solo',
     description: 'Kost putri tenang dengan lingkungan aman dan fasilitas lengkap.',
     image_url: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80',
+    ],
     latitude: -7.5585,
     longitude: 110.8550,
     bank_name: 'BCA',
@@ -43,6 +49,12 @@ const DUMMY_SOLO_KOSTS: PropertyItem[] = [
     address: 'Jl. Menteri Supeno No. 8, Manahan, Solo',
     description: 'Kost eksklusif dekat pusat kuliner Manahan & stasiun Solo Balapan.',
     image_url: 'https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=800&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1554995207-c18c20360250?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80',
+    ],
     latitude: -7.5535,
     longitude: 110.8095,
     bank_name: 'BCA',
@@ -67,6 +79,12 @@ const DUMMY_SOLO_KOSTS: PropertyItem[] = [
     address: 'Jl. Garuda Mas No. 21, Pabelan, Kartasura',
     description: 'Kost khusus mahasiswa putra UMS dengan akses internet cepat.',
     image_url: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1584622781564-1d987f7333c1?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80',
+    ],
     latitude: -7.5552,
     longitude: 110.7712,
     bank_name: 'BCA',
@@ -91,6 +109,12 @@ const DUMMY_SOLO_KOSTS: PropertyItem[] = [
     address: 'Jl. Dr. Supomo No. 34, Mangkubumen, Solo',
     description: 'Hunian kost nyaman di pusat kota Surakarta.',
     image_url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80',
+    images: [
+      'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1620626011761-996317b8d101?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=800&q=80',
+    ],
     latitude: -7.5610,
     longitude: 110.8150,
     bank_name: 'BCA',
@@ -127,17 +151,31 @@ export default function CatalogPage() {
   useEffect(() => {
     async function loadKostsFromSupabase() {
       try {
-        const { data, error } = await supabase
+        let rawData: any[] | null = null;
+        const res = await supabase
           .from('kosts')
           .select(`
-            id, name, type, subdistrict, landmark_proximity, address, description, image_url, latitude, longitude,
+            id, name, type, subdistrict, landmark_proximity, address, description, image_url, images, latitude, longitude,
             bank_name, bank_account_number, bank_account_holder,
             rooms ( id, room_number, price_per_month, is_available, facilities )
           `);
 
-        if (!error && data && data.length > 0) {
-          // Bersihkan kamar ganda/dobel jika ada
-          const sanitizedKosts = data.map((item: any) => {
+        if (res.error && res.error.message?.includes('images')) {
+          const fallbackRes = await supabase
+            .from('kosts')
+            .select(`
+              id, name, type, subdistrict, landmark_proximity, address, description, image_url, latitude, longitude,
+              bank_name, bank_account_number, bank_account_holder,
+              rooms ( id, room_number, price_per_month, is_available, facilities )
+            `);
+          rawData = fallbackRes.data as any;
+        } else if (!res.error && res.data) {
+          rawData = res.data as any;
+        }
+
+        if (rawData && rawData.length > 0) {
+          // Bersihkan kamar ganda/dobel jika ada & pastikan images array tersedia
+          const sanitizedKosts = rawData.map((item: any) => {
             const seenRooms = new Set<string>();
             const uniqueRooms = (item.rooms || []).filter((r: any) => {
               const nameKey = (r.room_number || '').trim().toLowerCase();
@@ -145,8 +183,13 @@ export default function CatalogPage() {
               seenRooms.add(nameKey);
               return true;
             });
+            const photoList = Array.isArray(item.images) && item.images.length > 0
+              ? item.images
+              : (item.image_url ? [item.image_url] : []);
+
             return {
               ...item,
+              images: photoList,
               rooms: uniqueRooms.length > 0 ? uniqueRooms : item.rooms,
             };
           });

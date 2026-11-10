@@ -19,6 +19,7 @@ export interface PropertyItem {
   address: string;
   description?: string;
   image_url: string;
+  images?: string[];
   latitude: number;
   longitude: number;
   bank_name?: string;
@@ -81,6 +82,16 @@ export default function PropertyCard({
             {kost.subdistrict}
           </span>
         </div>
+
+        {/* Badge Jumlah Foto Galeri */}
+        {kost.images && kost.images.length > 1 && (
+          <div className="absolute bottom-2.5 right-2.5 bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-xs">
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span>{kost.images.length} Foto</span>
+          </div>
+        )}
       </div>
 
       {/* Konten Kartu */}

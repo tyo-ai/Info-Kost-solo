@@ -44,7 +44,8 @@ export default function AdminDashboardPage() {
   const [price, setPrice] = useState('850000');
   const [roomNumber, setRoomNumber] = useState('Kamar 01');
   const [coords, setCoords] = useState<{ lat: number; lng: number }>({ lat: -7.5561, lng: 110.8558 });
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formSuccess, setFormSuccess] = useState('');
 
@@ -108,46 +109,115 @@ export default function AdminDashboardPage() {
     }
   };
 
+  // ─── Foto Upload & Preview Handlers ─────────────────────────
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const newFiles = Array.from(e.target.files);
+    const newUrls = newFiles.map((file) => URL.createObjectURL(file));
+
+    setImageFiles((prev) => [...prev, ...newFiles]);
+    setPreviewUrls((prev) => [...prev, ...newUrls]);
+    e.target.value = '';
+  };
+
+  const handleRemoveImage = (indexToRemove: number) => {
+    setImageFiles((prev) => prev.filter((_, i) => i !== indexToRemove));
+    setPreviewUrls((prev) => {
+      try {
+        URL.revokeObjectURL(prev[indexToRemove]);
+      } catch (_) {}
+      return prev.filter((_, i) => i !== indexToRemove);
+    });
+  };
+
+  const handleSetMainImage = (indexToMakeMain: number) => {
+    if (indexToMakeMain === 0) return;
+    setImageFiles((prev) => {
+      const next = [...prev];
+      const [selected] = next.splice(indexToMakeMain, 1);
+      next.unshift(selected);
+      return next;
+    });
+    setPreviewUrls((prev) => {
+      const next = [...prev];
+      const [selected] = next.splice(indexToMakeMain, 1);
+      next.unshift(selected);
+      return next;
+    });
+  };
+
   const handleCreateKost = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setFormSuccess('');
 
     try {
-      let finalImageUrl = 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80';
+      const uploadedUrls: string[] = [];
 
-      // Upload & Kompres Gambar
-      if (imageFile) {
-        const compressed = await compressImage(imageFile, 1280, 0.7);
-        const fileName = `kost-${Date.now()}-${compressed.name}`;
-        const { error: uploadError } = await supabase.storage
-          .from('foto-kost')
-          .upload(fileName, compressed);
+      // Upload & Kompres Setiap Gambar yang Dipilih
+      if (imageFiles.length > 0) {
+        for (let i = 0; i < imageFiles.length; i++) {
+          const file = imageFiles[i];
+          const compressed = await compressImage(file, 1280, 0.75);
+          const sanitizedName = compressed.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+          const fileName = `kost-${Date.now()}-${i}-${sanitizedName}`;
 
-        if (!uploadError) {
-          const { data: publicUrlData } = supabase.storage.from('foto-kost').getPublicUrl(fileName);
-          finalImageUrl = publicUrlData.publicUrl;
+          const { error: uploadError } = await supabase.storage
+            .from('foto-kost')
+            .upload(fileName, compressed);
+
+          if (!uploadError) {
+            const { data: publicUrlData } = supabase.storage
+              .from('foto-kost')
+              .getPublicUrl(fileName);
+            if (publicUrlData?.publicUrl) {
+              uploadedUrls.push(publicUrlData.publicUrl);
+            }
+          } else {
+            console.warn(`Gagal upload file ${file.name}:`, uploadError.message);
+          }
         }
       }
 
-      // Insert Kost
-      const { data: kostData, error: kostError } = await supabase
+      const defaultFallback = 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80';
+      const primaryImageUrl = uploadedUrls.length > 0 ? uploadedUrls[0] : defaultFallback;
+      const finalImagesList = uploadedUrls.length > 0 ? uploadedUrls : [defaultFallback];
+
+      // Insert Kost dengan Fallback jika kolom images belum ada
+      let kostData: any = null;
+      const payload: any = {
+        name,
+        type,
+        subdistrict,
+        landmark_proximity: landmark,
+        address,
+        description,
+        latitude: coords.lat,
+        longitude: coords.lng,
+        image_url: primaryImageUrl,
+        images: finalImagesList,
+      };
+
+      let { data, error: kostError } = await supabase
         .from('kosts')
-        .insert({
-          name,
-          type,
-          subdistrict,
-          landmark_proximity: landmark,
-          address,
-          description,
-          latitude: coords.lat,
-          longitude: coords.lng,
-          image_url: finalImageUrl,
-        })
+        .insert(payload)
         .select()
         .single();
 
+      if (kostError && kostError.message?.includes('images')) {
+        // Fallback tabel tanpa kolom `images`
+        delete payload.images;
+        const fallbackRes = await supabase
+          .from('kosts')
+          .insert(payload)
+          .select()
+          .single();
+        data = fallbackRes.data;
+        kostError = fallbackRes.error;
+      }
+
       if (kostError) throw kostError;
+      kostData = data;
 
       // Insert Default Room
       await supabase.from('rooms').insert({
@@ -163,7 +233,13 @@ export default function AdminDashboardPage() {
       setAddress('');
       setLandmark('');
       setDescription('');
-      setImageFile(null);
+      previewUrls.forEach((url) => {
+        try {
+          URL.revokeObjectURL(url);
+        } catch (_) {}
+      });
+      setImageFiles([]);
+      setPreviewUrls([]);
     } catch (err: any) {
       alert('Gagal menambahkan listing kost: ' + (err.message || 'Error'));
     } finally {
@@ -365,14 +441,113 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block mb-1.5 font-bold text-slate-800">Foto Properti</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setImageFile(e.target.files?.[0] || null)}
-                  className="w-full text-xs text-slate-700 file:mr-3 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#f6f3eb] file:text-slate-800 hover:file:bg-[#eae5d8] cursor-pointer"
-                />
+              {/* Upload Foto Properti & Kamar (Multi-Foto dengan Rasio Tetap 16:9) */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="font-bold text-slate-800">
+                    Foto Properti & Kamar Kost
+                  </label>
+                  <span className="text-[11px] font-semibold text-slate-500 bg-[#f6f3eb] px-2.5 py-0.5 rounded-full border border-[#e8e4db]">
+                    📐 Rasio Tetap 16:9 (Landscape)
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-500">
+                  Unggah beberapa foto sekaligus (kamar tidur, kamar mandi dalam, meja belajar, fasad luar). Foto pertama akan otomatis dijadikan foto sampul utama.
+                </p>
+
+                {/* Input File Box */}
+                <div className="border-2 border-dashed border-[#e2ded4] hover:border-slate-400 rounded-2xl p-4 bg-[#faf8f5] transition">
+                  <label className="flex flex-col items-center justify-center cursor-pointer text-center space-y-1.5">
+                    <div className="w-10 h-10 rounded-full bg-white border border-[#e8e4db] flex items-center justify-center text-slate-600 shadow-2xs">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <span className="font-bold text-slate-800 text-xs">
+                      {previewUrls.length > 0 ? '+ Tambah Foto Lainnya' : 'Pilih / Drag Beberapa Foto Kost'}
+                    </span>
+                    <span className="text-[10px] text-slate-400">
+                      Format JPG, PNG, WEBP (Otomatis dikompres dengan rasio 16:9)
+                    </span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleImageChange}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+
+                {/* Grid Preview Foto Berasio Tetap 16:9 */}
+                {previewUrls.length > 0 && (
+                  <div className="pt-2">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[11px] font-bold text-slate-700">
+                        {previewUrls.length} Foto Siap Diunggah:
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          previewUrls.forEach((u) => {
+                            try { URL.revokeObjectURL(u); } catch (_) {}
+                          });
+                          setImageFiles([]);
+                          setPreviewUrls([]);
+                        }}
+                        className="text-[10px] font-semibold text-rose-600 hover:text-rose-800"
+                      >
+                        Hapus Semua
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                      {previewUrls.map((url, idx) => (
+                        <div
+                          key={idx}
+                          className="relative aspect-video rounded-xl overflow-hidden border border-[#e8e4db] bg-slate-900 group shadow-2xs"
+                        >
+                          <img
+                            src={url}
+                            alt={`Preview ${idx + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+
+                          {/* Badge Foto Utama */}
+                          {idx === 0 ? (
+                            <span className="absolute top-1.5 left-1.5 bg-slate-900/90 text-white text-[9px] font-bold px-2 py-0.5 rounded-md backdrop-blur-xs">
+                              ⭐ Foto Utama
+                            </span>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => handleSetMainImage(idx)}
+                              title="Jadikan Foto Utama (Cover)"
+                              className="absolute bottom-1.5 left-1.5 opacity-0 group-hover:opacity-100 transition bg-black/75 hover:bg-black text-white text-[9px] font-bold px-2 py-0.5 rounded-md backdrop-blur-xs"
+                            >
+                              Jadikan Utama
+                            </button>
+                          )}
+
+                          {/* Tombol Hapus Silang (✕) Bulat */}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage(idx)}
+                            aria-label={`Hapus foto ${idx + 1}`}
+                            className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/70 hover:bg-rose-600 text-white flex items-center justify-center text-[11px] font-bold transition shadow-xs"
+                          >
+                            ✕
+                          </button>
+
+                          {/* Nomor Urut */}
+                          <span className="absolute bottom-1.5 right-1.5 bg-black/60 text-white text-[9px] font-bold px-1.5 py-0.5 rounded backdrop-blur-xs">
+                            #{idx + 1}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <button

@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS public.kosts (
     landmark_proximity TEXT,
     description TEXT,
     image_url TEXT,
+    images TEXT[],
     latitude NUMERIC(10, 7) NOT NULL DEFAULT -7.5693,
     longitude NUMERIC(10, 7) NOT NULL DEFAULT 110.8285,
     bank_name TEXT DEFAULT 'BCA',
@@ -56,6 +57,7 @@ CREATE TABLE IF NOT EXISTS public.kosts (
 ALTER TABLE public.kosts ADD COLUMN IF NOT EXISTS type kost_type DEFAULT 'campur';
 ALTER TABLE public.kosts ADD COLUMN IF NOT EXISTS subdistrict TEXT NOT NULL DEFAULT 'Jebres';
 ALTER TABLE public.kosts ADD COLUMN IF NOT EXISTS landmark_proximity TEXT;
+ALTER TABLE public.kosts ADD COLUMN IF NOT EXISTS images TEXT[];
 ALTER TABLE public.kosts ADD COLUMN IF NOT EXISTS bank_name TEXT DEFAULT 'BCA';
 ALTER TABLE public.kosts ADD COLUMN IF NOT EXISTS bank_account_number TEXT DEFAULT '0158923120';
 ALTER TABLE public.kosts ADD COLUMN IF NOT EXISTS bank_account_holder TEXT DEFAULT 'Info Kost Solo Official';
