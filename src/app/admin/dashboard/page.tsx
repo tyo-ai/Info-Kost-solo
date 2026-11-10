@@ -48,7 +48,7 @@ export default function AdminDashboardPage() {
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formSuccess, setFormSuccess] = useState('');
-  const [selectedFacilities, setSelectedFacilities] = useState<string[]>(['Kamar Mandi Dalam', 'Kasur Springbed', 'AC']);
+  const [facilitiesText, setFacilitiesText] = useState('Kamar Mandi Dalam, Kasur Springbed, AC, WiFi Cepat, Lemari & Meja');
 
   // Antrean Verifikasi
   const [bookings, setBookings] = useState<BookingQueueItem[]>([]);
@@ -238,15 +238,21 @@ export default function AdminDashboardPage() {
       if (kostError) throw kostError;
       kostData = data;
 
-      // Insert Kamar dengan fasilitas yang dipilih admin
+      // Parse Fasilitas Kamar yang diketik manual oleh admin (pisahkan koma/enter)
+      const parsedFacilities = facilitiesText
+        .split(/[,;\n]+/)
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+      // Insert Kamar dengan fasilitas yang diketik admin
       await supabase.from('rooms').insert({
         kost_id: kostData.id,
         room_number: roomNumber,
         price_per_month: parseFloat(price),
         is_available: true,
-        facilities: selectedFacilities.length > 0
-          ? selectedFacilities
-          : ['Kamar Mandi Dalam', 'Kasur Springbed', 'AC'],
+        facilities: parsedFacilities.length > 0
+          ? parsedFacilities
+          : ['Kamar Mandi Dalam', 'Kasur Springbed'],
       });
 
       setFormSuccess('Listing properti kost baru berhasil ditambahkan ke database!');
@@ -254,7 +260,7 @@ export default function AdminDashboardPage() {
       setAddress('');
       setLandmark('');
       setDescription('');
-      setSelectedFacilities(['Kamar Mandi Dalam', 'Kasur Springbed', 'AC']);
+      setFacilitiesText('Kamar Mandi Dalam, Kasur Springbed, AC, WiFi Cepat, Lemari & Meja');
       previewUrls.forEach((url) => {
         try {
           URL.revokeObjectURL(url);
@@ -463,81 +469,50 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              {/* Fasilitas Kamar (Checkbox Pilihan + Input Custom) */}
+              {/* Fasilitas Kamar (Admin Ketik Bebas / Pisahkan dengan Koma) */}
               {(() => {
-                const FASILITAS_PRESET = [
-                  'Kamar Mandi Dalam', 'Kamar Mandi Luar', 'Kasur Springbed', 'Kasur Busa',
-                  'AC', 'Kipas Angin', 'WiFi Cepat', 'WiFi Bersama',
-                  'Lemari Pakaian', 'Meja Belajar', 'Kursi Kerja', 'Rak Buku',
-                  'Water Heater', 'Dapur Bersama', 'Parkir Motor', 'Parkir Mobil',
-                  'Smart TV', 'Kulkas', 'CCTV 24 Jam', 'Keamanan 24 Jam',
-                ];
-                const toggleFasility = (fac: string) => {
-                  setSelectedFacilities(prev =>
-                    prev.includes(fac) ? prev.filter(f => f !== fac) : [...prev, fac]
-                  );
-                };
+                const liveFacilities = facilitiesText
+                  .split(/[,;\n]+/)
+                  .map((s) => s.trim())
+                  .filter(Boolean);
+
                 return (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <label className="font-bold text-slate-800">Fasilitas Kamar</label>
-                      <span className="text-[11px] text-slate-500 bg-[#f6f3eb] px-2 py-0.5 rounded-full border border-[#e8e4db] font-semibold">
-                        {selectedFacilities.length} dipilih
+                      <label className="font-bold text-slate-800">
+                        Fasilitas Kamar (Ketik Bebas)
+                      </label>
+                      <span className="text-[11px] text-slate-500 bg-[#f6f3eb] px-2.5 py-0.5 rounded-full border border-[#e8e4db] font-semibold">
+                        {liveFacilities.length} fasilitas terdeteksi
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-500">Centang fasilitas yang tersedia di kamar ini — akan tampil di katalog dan modal detail kamar.</p>
-                    <div className="grid grid-cols-2 gap-1.5">
-                      {FASILITAS_PRESET.map((fac) => {
-                        const checked = selectedFacilities.includes(fac);
-                        return (
-                          <button
-                            key={fac}
-                            type="button"
-                            onClick={() => toggleFasility(fac)}
-                            className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-[11px] font-semibold text-left transition-all ${
-                              checked
-                                ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
-                                : 'bg-white text-slate-700 border-[#e2ded4] hover:border-slate-400 hover:bg-[#f6f3eb]'
-                            }`}
-                          >
-                            <span className={`w-4 h-4 rounded flex items-center justify-center shrink-0 text-[10px] font-black border ${
-                              checked ? 'bg-white text-slate-900 border-white' : 'border-slate-300 text-transparent'
-                            }`}>
-                              ✓
+                    <p className="text-[11px] text-slate-500">
+                      Ketik fasilitas yang tersedia di kamar ini dan <strong>pisahkan dengan tanda koma ( , )</strong>.
+                    </p>
+                    <textarea
+                      rows={2}
+                      value={facilitiesText}
+                      onChange={(e) => setFacilitiesText(e.target.value)}
+                      placeholder="Contoh: Kamar Mandi Dalam, Kasur Springbed, AC, WiFi, Lemari, Meja Belajar"
+                      className="w-full px-3.5 py-2.5 border border-[#e2ded4] rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 bg-white text-xs leading-relaxed"
+                    />
+
+                    {/* Preview Tag Fasilitas yang otomatis muncul */}
+                    {liveFacilities.length > 0 && (
+                      <div className="pt-1">
+                        <span className="text-[10px] font-bold text-slate-500 block mb-1.5 uppercase tracking-wider">
+                          Preview Tampilan di Katalog:
+                        </span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {liveFacilities.map((fac, idx) => (
+                            <span
+                              key={idx}
+                              className="text-[11px] bg-[#f6f3eb] text-slate-800 font-semibold px-2.5 py-1 rounded-lg border border-[#e8e4db]"
+                            >
+                              ✓ {fac}
                             </span>
-                            {fac}
-                          </button>
-                        );
-                      })}
-                    </div>
-                    {/* Fasilitas Custom Tambahan */}
-                    <div className="flex gap-2 mt-2">
-                      <input
-                        type="text"
-                        id="custom-fac-input"
-                        placeholder="Tambah fasilitas lain... (tekan Enter)"
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            e.preventDefault();
-                            const val = (e.target as HTMLInputElement).value.trim();
-                            if (val && !selectedFacilities.includes(val)) {
-                              setSelectedFacilities(prev => [...prev, val]);
-                              (e.target as HTMLInputElement).value = '';
-                            }
-                          }
-                        }}
-                        className="flex-1 px-3 py-2 text-xs border border-[#e2ded4] rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 bg-white"
-                      />
-                    </div>
-                    {/* Tag fasilitas custom yang sudah ditambah (bukan dari preset) */}
-                    {selectedFacilities.filter(f => !['Kamar Mandi Dalam','Kamar Mandi Luar','Kasur Springbed','Kasur Busa','AC','Kipas Angin','WiFi Cepat','WiFi Bersama','Lemari Pakaian','Meja Belajar','Kursi Kerja','Rak Buku','Water Heater','Dapur Bersama','Parkir Motor','Parkir Mobil','Smart TV','Kulkas','CCTV 24 Jam','Keamanan 24 Jam'].includes(f)).length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 pt-1">
-                        {selectedFacilities.filter(f => !['Kamar Mandi Dalam','Kamar Mandi Luar','Kasur Springbed','Kasur Busa','AC','Kipas Angin','WiFi Cepat','WiFi Bersama','Lemari Pakaian','Meja Belajar','Kursi Kerja','Rak Buku','Water Heater','Dapur Bersama','Parkir Motor','Parkir Mobil','Smart TV','Kulkas','CCTV 24 Jam','Keamanan 24 Jam'].includes(f)).map(fac => (
-                          <span key={fac} className="inline-flex items-center gap-1 bg-slate-100 text-slate-700 text-[11px] font-semibold px-2.5 py-1 rounded-full border border-slate-200">
-                            {fac}
-                            <button type="button" onClick={() => setSelectedFacilities(prev => prev.filter(f => f !== fac))} className="text-slate-400 hover:text-rose-600 font-bold text-xs">✕</button>
-                          </span>
-                        ))}
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
