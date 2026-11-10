@@ -1,14 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 
-// Foto pelengkap default untuk interior kamar (kamar mandi dalam, meja kerja, interior kasur)
-const DEFAULT_SUPPLEMENTAL_ROOM_PHOTOS = [
-  'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80', // Kamar Utama
-  'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80', // Kamar Mandi Dalam
-  'https://images.unsplash.com/photo-1554995207-c18c20360250?auto=format&fit=crop&w=800&q=80', // Meja Belajar & Lemari
-  'https://images.unsplash.com/photo-1502005229762-ee1b2b8ab98f?auto=format&fit=crop&w=800&q=80', // Area Kamar & Kasur
-];
+const DEFAULT_PLACEHOLDER = 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80';
 
 interface ImageSliderProps {
   images: string[];
@@ -27,23 +21,11 @@ export default function ImageSlider({
   showThumbnails = true,
   badges,
 }: ImageSliderProps) {
-  // Pastikan array gambar valid dan selalu memiliki minimal beberapa slide foto kamar
-  const rawList = Array.isArray(images) && images.length > 0 ? images.filter(Boolean) : [];
-  let validImages: string[] = [];
-
-  if (rawList.length > 1) {
-    validImages = rawList;
-  } else if (rawList.length === 1) {
-    // Jika hanya ada 1 foto cover, lengkapi dengan foto interior kamar mandi, meja belajar, dan kamar tidur
-    validImages = [
-      rawList[0],
-      DEFAULT_SUPPLEMENTAL_ROOM_PHOTOS[1],
-      DEFAULT_SUPPLEMENTAL_ROOM_PHOTOS[2],
-      DEFAULT_SUPPLEMENTAL_ROOM_PHOTOS[3],
-    ];
-  } else {
-    validImages = DEFAULT_SUPPLEMENTAL_ROOM_PHOTOS;
-  }
+  // Gunakan HANYA foto asli yang dimasukkan admin; fallback ke placeholder jika kosong
+  const validImages: string[] =
+    Array.isArray(images) && images.filter(Boolean).length > 0
+      ? images.filter(Boolean)
+      : [DEFAULT_PLACEHOLDER];
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);

@@ -109,14 +109,28 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // ─── Foto Upload & Preview Handlers ─────────────────────────
+  // ─── Foto Upload & Preview Handlers (Max 10 Foto) ─────────────────────────
+  const MAX_PHOTOS = 10;
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
     const newFiles = Array.from(e.target.files);
-    const newUrls = newFiles.map((file) => URL.createObjectURL(file));
 
-    setImageFiles((prev) => [...prev, ...newFiles]);
-    setPreviewUrls((prev) => [...prev, ...newUrls]);
+    setImageFiles((prev) => {
+      const remaining = MAX_PHOTOS - prev.length;
+      if (remaining <= 0) {
+        alert(`Maksimal ${MAX_PHOTOS} foto per listing kost. Hapus sebagian foto untuk mengganti.`);
+        return prev;
+      }
+      const toAdd = newFiles.slice(0, remaining);
+      if (newFiles.length > remaining) {
+        alert(`Hanya ${remaining} foto yang ditambahkan (batas maksimal ${MAX_PHOTOS} foto tercapai).`);
+      }
+      const newUrls = toAdd.map((file) => URL.createObjectURL(file));
+      setPreviewUrls((prevUrls) => [...prevUrls, ...newUrls]);
+      return [...prev, ...toAdd];
+    });
+
     e.target.value = '';
   };
 
@@ -441,43 +455,57 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              {/* Upload Foto Properti & Kamar (Multi-Foto dengan Rasio Tetap 16:9) */}
+              {/* Upload Foto Properti & Kamar (Multi-Foto, Max 10, Rasio Tetap 16:9) */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <label className="font-bold text-slate-800">
                     Foto Properti & Kamar Kost
                   </label>
-                  <span className="text-[11px] font-semibold text-slate-500 bg-[#f6f3eb] px-2.5 py-0.5 rounded-full border border-[#e8e4db]">
-                    📐 Rasio Tetap 16:9 (Landscape)
+                  <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${
+                    previewUrls.length >= MAX_PHOTOS
+                      ? 'bg-rose-50 text-rose-700 border-rose-200'
+                      : 'bg-[#f6f3eb] text-slate-600 border-[#e8e4db]'
+                  }`}>
+                    {previewUrls.length} / {MAX_PHOTOS} Foto
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-500">
-                  Unggah beberapa foto sekaligus (kamar tidur, kamar mandi dalam, meja belajar, fasad luar). Foto pertama akan otomatis dijadikan foto sampul utama.
+                  Unggah foto asli kost (kamar tidur, kamar mandi, meja belajar, tampak luar). Foto pertama = sampul utama di katalog. Maks. <strong>{MAX_PHOTOS} foto</strong> per listing.
                 </p>
 
-                {/* Input File Box */}
-                <div className="border-2 border-dashed border-[#e2ded4] hover:border-slate-400 rounded-2xl p-4 bg-[#faf8f5] transition">
-                  <label className="flex flex-col items-center justify-center cursor-pointer text-center space-y-1.5">
-                    <div className="w-10 h-10 rounded-full bg-white border border-[#e8e4db] flex items-center justify-center text-slate-600 shadow-2xs">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                    <span className="font-bold text-slate-800 text-xs">
-                      {previewUrls.length > 0 ? '+ Tambah Foto Lainnya' : 'Pilih / Drag Beberapa Foto Kost'}
-                    </span>
-                    <span className="text-[10px] text-slate-400">
-                      Format JPG, PNG, WEBP (Otomatis dikompres dengan rasio 16:9)
-                    </span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={handleImageChange}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
+                {/* Input File Box — hidden jika sudah full */}
+                {previewUrls.length < MAX_PHOTOS && (
+                  <div className="border-2 border-dashed border-[#e2ded4] hover:border-slate-400 rounded-2xl p-4 bg-[#faf8f5] transition">
+                    <label className="flex flex-col items-center justify-center cursor-pointer text-center space-y-1.5">
+                      <div className="w-10 h-10 rounded-full bg-white border border-[#e8e4db] flex items-center justify-center text-slate-600 shadow-2xs">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <span className="font-bold text-slate-800 text-xs">
+                        {previewUrls.length > 0 ? `+ Tambah Foto (sisa ${MAX_PHOTOS - previewUrls.length} slot)` : 'Pilih Beberapa Foto Kost'}
+                      </span>
+                      <span className="text-[10px] text-slate-400">
+                        JPG, PNG, WEBP — dikompres otomatis sebelum diunggah
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleImageChange}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                )}
+
+                {/* Pesan sudah penuh */}
+                {previewUrls.length >= MAX_PHOTOS && (
+                  <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-[11px] text-amber-800 font-semibold flex items-center gap-2">
+                    <span>⚠️</span>
+                    <span>Batas maksimal {MAX_PHOTOS} foto tercapai. Hapus foto untuk menambah yang baru.</span>
+                  </div>
+                )}
 
                 {/* Grid Preview Foto Berasio Tetap 16:9 */}
                 {previewUrls.length > 0 && (
@@ -529,7 +557,7 @@ export default function AdminDashboardPage() {
                             </button>
                           )}
 
-                          {/* Tombol Hapus Silang (✕) Bulat */}
+                          {/* Tombol Hapus Silang (✕) */}
                           <button
                             type="button"
                             onClick={() => handleRemoveImage(idx)}
