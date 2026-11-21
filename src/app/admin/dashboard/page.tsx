@@ -58,10 +58,6 @@ export default function AdminDashboardPage() {
   const [bookings, setBookings] = useState<BookingQueueItem[]>([]);
   const [activeProofModal, setActiveProofModal] = useState<string | null>(null);
 
-  // Daftar Kost di Database untuk Kelola / Hapus
-  const [adminKosts, setAdminKosts] = useState<any[]>([]);
-  const [deletingKostId, setDeletingKostId] = useState<number | null>(null);
-
   // ─── Cek Sesi Login ───────────────────────────────────────────
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -74,7 +70,6 @@ export default function AdminDashboardPage() {
         setUserEmail(session.user.email ?? null);
         setAuthLoading(false);
         fetchBookings();
-        fetchAdminKosts();
       }
     });
 
@@ -116,51 +111,6 @@ export default function AdminDashboardPage() {
       }
     } catch (e) {
       console.info('Koneksi Supabase belum aktif atau menggunakan local state');
-    }
-  };
-
-  // ─── Fetch Kosts untuk Admin ─────────────────────────────────
-  const fetchAdminKosts = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('kosts')
-        .select(`
-          id, name, type, subdistrict, address, image_url, images, created_at,
-          rooms ( id, room_number, price_per_month )
-        `)
-        .order('id', { ascending: false });
-
-      if (!error && data) {
-        setAdminKosts(data);
-      }
-    } catch (e) {
-      console.info('Gagal memuat list kost admin:', e);
-    }
-  };
-
-  // ─── Handle Hapus Kost dari Database ───────────────────────────
-  const handleDeleteKostFromDb = async (kostId: number, kostName: string) => {
-    const confirmDelete = window.confirm(
-      `Yakin ingin menghapus kost "${kostName}" dari database?\n\nSetelah dihapus, properti ini akan hilang permanen dari database dan tidak akan muncul lagi di katalog user.`
-    );
-    if (!confirmDelete) return;
-
-    setDeletingKostId(kostId);
-    try {
-      // 1. Hapus kamar berelasi
-      await supabase.from('rooms').delete().eq('kost_id', kostId);
-
-      // 2. Hapus kost di tabel kosts
-      const { error } = await supabase.from('kosts').delete().eq('id', kostId);
-      if (error) throw error;
-
-      // 3. Update state di dashboard
-      setAdminKosts((prev) => prev.filter((k) => k.id !== kostId));
-      alert(`Kost "${kostName}" berhasil dihapus dari database dan katalog!`);
-    } catch (err: any) {
-      alert('Gagal menghapus kost: ' + (err.message || 'Error'));
-    } finally {
-      setDeletingKostId(null);
     }
   };
 
@@ -341,7 +291,6 @@ export default function AdminDashboardPage() {
       });
 
       setFormSuccess('Listing properti kost baru berhasil ditambahkan ke database!');
-      fetchAdminKosts();
       setName('');
       setAddress('');
       setLandmark('');
@@ -817,63 +766,6 @@ export default function AdminDashboardPage() {
                           </button>
                         </div>
                       )}
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-
-            {/* Panel Daftar Listing Kost & Hapus dari Database */}
-            <div className="bg-white p-6 sm:p-7 rounded-3xl border border-[#e8e4db] shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-lg font-black text-slate-900 tracking-tight">Kelola Listing Kost</h2>
-                  <p className="text-xs text-slate-500 mt-0.5">Hapus properti yang sudah tidak aktif langsung dari database</p>
-                </div>
-                <span className="text-xs bg-[#f6f3eb] text-slate-800 border border-[#e8e4db] px-3 py-1 rounded-full font-bold">
-                  {adminKosts.length} Properti
-                </span>
-              </div>
-
-              <div className="space-y-3 overflow-y-auto max-h-[500px] pr-1">
-                {adminKosts.length === 0 ? (
-                  <div className="text-center py-8 text-xs text-slate-500">
-                    Belum ada listing kost di database Supabase.
-                  </div>
-                ) : (
-                  adminKosts.map((k) => (
-                    <div
-                      key={k.id}
-                      className="p-3.5 rounded-2xl border border-[#e8e4db] bg-white hover:border-slate-300 transition flex items-center justify-between gap-3"
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <img
-                          src={k.image_url || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=400&q=80'}
-                          alt={k.name}
-                          className="w-14 h-14 rounded-xl object-cover shrink-0 border border-[#e8e4db]"
-                        />
-                        <div className="min-w-0">
-                          <p className="font-bold text-slate-900 text-xs sm:text-sm truncate">{k.name}</p>
-                          <p className="text-slate-500 text-[11px] truncate">
-                            Kec. {k.subdistrict} • Tipe {k.type} • Rp {Number(k.rooms?.[0]?.price_per_month || 0).toLocaleString('id-ID')}/bln
-                          </p>
-                          <span className="inline-block text-[10px] text-slate-400 font-medium">
-                            ID Database: #{k.id}
-                          </span>
-                        </div>
-                      </div>
-
-                      <button
-                        type="button"
-                        disabled={deletingKostId === k.id}
-                        onClick={() => handleDeleteKostFromDb(k.id, k.name)}
-                        className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold transition shrink-0 active:scale-95 disabled:opacity-50 flex items-center gap-1.5 cursor-pointer"
-                      >
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                        <span>{deletingKostId === k.id ? 'Menghapus...' : 'Hapus'}</span>
-                      </button>
                     </div>
                   ))
                 )}

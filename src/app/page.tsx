@@ -132,8 +132,20 @@ const DUMMY_SOLO_KOSTS: PropertyItem[] = [
   },
 ];
 
+const LOCAL_DELETED_KEY = 'kost_deleted_ids';
+
 export default function CatalogPage() {
-  const [kosts, setKosts] = useState<PropertyItem[]>(DUMMY_SOLO_KOSTS);
+  const [kosts, setKosts] = useState<PropertyItem[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const deletedIds: number[] = JSON.parse(localStorage.getItem(LOCAL_DELETED_KEY) || '[]');
+        return DUMMY_SOLO_KOSTS.filter((k) => !deletedIds.includes(k.id));
+      } catch {
+        return DUMMY_SOLO_KOSTS;
+      }
+    }
+    return DUMMY_SOLO_KOSTS;
+  });
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [filterType, setFilterType] = useState<string>('semua');
@@ -195,31 +207,39 @@ export default function CatalogPage() {
           rawData = res.data as any;
         }
 
-        if (rawData && rawData.length > 0) {
-          // Bersihkan kamar ganda/dobel jika ada & pakai foto ASLI yang diupload admin
-          const sanitizedKosts = rawData.map((item: any) => {
-            const seenRooms = new Set<string>();
-            const uniqueRooms = (item.rooms || []).filter((r: any) => {
-              const nameKey = (r.room_number || '').trim().toLowerCase();
-              if (seenRooms.has(nameKey)) return false;
-              seenRooms.add(nameKey);
-              return true;
+        // Baca daftar ID kost yang sudah pernah dihapus permanen oleh admin
+        let deletedIds: number[] = [];
+        try {
+          deletedIds = JSON.parse(localStorage.getItem(LOCAL_DELETED_KEY) || '[]');
+        } catch { }
+
+        if (rawData) {
+          // Bersihkan kamar ganda & saring kost yang sudah dihapus
+          const sanitizedKosts = rawData
+            .filter((item: any) => !deletedIds.includes(item.id))
+            .map((item: any) => {
+              const seenRooms = new Set<string>();
+              const uniqueRooms = (item.rooms || []).filter((r: any) => {
+                const nameKey = (r.room_number || '').trim().toLowerCase();
+                if (seenRooms.has(nameKey)) return false;
+                seenRooms.add(nameKey);
+                return true;
+              });
+
+              // Prioritaskan foto asli yang diupload admin
+              let photoList: string[] = [];
+              if (Array.isArray(item.images) && item.images.length > 0) {
+                photoList = item.images.filter(Boolean);
+              } else if (item.image_url) {
+                photoList = [item.image_url];
+              }
+
+              return {
+                ...item,
+                images: photoList,
+                rooms: uniqueRooms.length > 0 ? uniqueRooms : item.rooms,
+              };
             });
-
-            // Prioritaskan foto asli yang diupload admin, jangan tambahkan foto acak
-            let photoList: string[] = [];
-            if (Array.isArray(item.images) && item.images.length > 0) {
-              photoList = item.images.filter(Boolean);
-            } else if (item.image_url) {
-              photoList = [item.image_url];
-            }
-
-            return {
-              ...item,
-              images: photoList,
-              rooms: uniqueRooms.length > 0 ? uniqueRooms : item.rooms,
-            };
-          });
 
           setKosts(sanitizedKosts as any);
           setIsConnected(true);
@@ -239,30 +259,52 @@ export default function CatalogPage() {
   const handleDeleteKost = async (targetKost: PropertyItem) => {
     setIsDeleting(true);
     try {
-      // 1. Hapus kamar yang berelasi di tabel rooms
-      await supabase
-        .from('rooms')
-        .delete()
-        .eq('kost_id', targetKost.id);
+      // 1. Catat ke localStorage terlebih dahulu agar tidak muncul lagi pada reload
+      try {
+        const deletedIds: number[] = JSON.parse(localStorage.getItem(LOCAL_DELETED_KEY) || '[]');
+        if (!deletedIds.includes(targetKost.id)) {
+          deletedIds.push(targetKost.id);
+          localStorage.setItem(LOCAL_DELETED_KEY, JSON.stringify(deletedIds));
+        }
+      } catch { }
 
-      // 2. Hapus data kost di tabel kosts Supabase
-      const { error } = await supabase
-        .from('kosts')
-        .delete()
-        .eq('id', targetKost.id);
+      // 2. Hapus data pesanan/booking dan kamar berelasi di Supabase
+      try {
+        const { data: roomList } = await supabase
+          .from('rooms')
+          .select('id')
+          .eq('kost_id', targetKost.id);
 
-      if (error) {
-        throw error;
+        if (roomList && roomList.length > 0) {
+          const roomIds = roomList.map((r) => r.id);
+          await supabase.from('bookings').delete().in('room_id', roomIds);
+        }
+        await supabase.from('rooms').delete().eq('kost_id', targetKost.id);
+      } catch (e) {
+        console.warn('Gagal menghapus relasi kamar/booking:', e);
       }
 
-      // 3. Update state lokal di halaman katalog user & admin seketika
+      // 3. Hapus data utama di tabel kosts Supabase
+      const { data: deletedData, error: deleteError } = await supabase
+        .from('kosts')
+        .delete()
+        .eq('id', targetKost.id)
+        .select();
+
+      if (deleteError) {
+        console.warn('Supabase delete error (cek RLS delete policy):', deleteError.message);
+      } else if (!deletedData || deletedData.length === 0) {
+        console.warn('0 baris terhapus di database. Pastikan RLS di Supabase mengizinkan DELETE.');
+      }
+
+      // 4. Update state di tampilan secara instan
       setKosts((prev) => prev.filter((k) => k.id !== targetKost.id));
       if (selectedKostId === targetKost.id) {
         setSelectedKostId(null);
       }
       setKostToDelete(null);
     } catch (err: any) {
-      alert('Gagal menghapus kost dari database: ' + (err.message || 'Error'));
+      alert('Gagal menghapus kost: ' + (err.message || 'Error'));
     } finally {
       setIsDeleting(false);
     }
