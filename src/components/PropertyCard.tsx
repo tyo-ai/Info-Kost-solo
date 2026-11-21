@@ -134,25 +134,25 @@ export default function PropertyCard({
           </p>
         </div>
 
-        <div className="pt-4 border-t border-slate-100 flex items-end justify-between gap-3">
-          <div>
+        <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
+          <div className="min-w-0">
             <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-0.5">Mulai dari</span>
-            <div className="text-slate-900 font-black text-xl sm:text-2xl tracking-tight">
+            <div className="text-slate-900 font-black text-base sm:text-lg tracking-tight leading-tight whitespace-nowrap">
               Rp {Number(lowestPrice).toLocaleString('id-ID')}
+              <span className="text-xs font-normal text-slate-400 ml-1">/bln</span>
             </div>
-            <span className="text-xs font-normal text-slate-400">/bulan</span>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={() => onSelectDetail(kost)}
-              className="bg-[#f6f3eb] hover:bg-[#eae5d8] text-slate-700 text-sm font-semibold px-4 py-2.5 rounded-2xl transition border border-[#e8e4db]"
+              className="bg-[#f6f3eb] hover:bg-[#eae5d8] text-slate-700 text-xs sm:text-sm font-semibold px-3 sm:px-4 py-2.5 rounded-2xl transition border border-[#e8e4db] whitespace-nowrap"
             >
               Cek Kamar
             </button>
             <button
               onClick={() => onSelectBooking(kost)}
-              className="bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold px-5 py-2.5 rounded-2xl shadow-sm transition active:scale-95"
+              className="bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold px-3.5 sm:px-5 py-2.5 rounded-2xl shadow-sm transition active:scale-95 whitespace-nowrap"
             >
               Ajukan Sewa
             </button>

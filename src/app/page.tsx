@@ -446,7 +446,7 @@ export default function CatalogPage() {
           </div>
 
           {/* Kolom Kanan: Peta Sebaran Fixed Height di Desktop */}
-          <div className="lg:col-span-5 h-[460px] lg:h-[calc(100vh-130px)] lg:sticky lg:top-28">
+          <div className="lg:col-span-5 h-[420px] lg:h-[calc(100vh-100px)] lg:sticky lg:top-20">
             <CatalogMap
               kosts={filteredKosts.map((k) => ({
                 id: k.id,
