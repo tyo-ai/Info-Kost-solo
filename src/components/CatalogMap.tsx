@@ -97,7 +97,7 @@ const DynamicCatalogMap = dynamic(
                       onClick={() => {
                         if (onSelectKost) onSelectKost(k.id);
                       }}
-                      className="w-full mt-2 bg-orange-700 hover:bg-orange-800 text-white font-bold text-[11px] py-1.5 px-2 rounded-lg transition shadow-2xs text-center"
+                      className="w-full mt-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-2 px-3 rounded-lg transition shadow-2xs text-center"
                     >
                       Buka Kamar di Kiri →
                     </button>

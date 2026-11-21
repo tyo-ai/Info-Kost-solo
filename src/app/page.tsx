@@ -346,33 +346,33 @@ export default function CatalogPage() {
       <Navbar />
 
       {/* Main Container Split Screen */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 flex flex-col">
         {/* Header & Filter Bar Khas Solo */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6 mb-8">
           <div>
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Katalog Kost Surakarta</h1>
-            <p className="text-xs text-slate-600 mt-1">
-              Temukan hunian sewa dekat kampus UNS, UMS, Manahan, dan stasiun di Solo. Klik titik peta di kanan untuk langsung melihat kamar di kiri.
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Katalog Kost Surakarta</h1>
+            <p className="text-xs sm:text-sm text-slate-600 mt-2 max-w-2xl leading-relaxed">
+              Temukan hunian sewa nyaman dekat kampus UNS, UMS, Manahan, dan stasiun di Solo. Klik titik peta di kanan untuk langsung melihat pilihan kamar.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-3">
             {/* Search Input */}
-            <div className="relative flex-1 sm:w-64">
+            <div className="relative flex-1 sm:w-72 md:w-80">
               <input
                 type="text"
                 placeholder="Cari UNS, UMS, Jebres..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-8 pr-3 py-2 text-xs bg-white border border-[#e8e4db] rounded-full focus:outline-none focus:ring-1 focus:ring-slate-900 shadow-2xs"
+                className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm bg-white border border-[#e8e4db] rounded-full focus:outline-none focus:ring-2 focus:ring-slate-900/20 shadow-2xs transition"
               />
-              <svg className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-slate-400 absolute left-3.5 top-3 sm:top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
 
             {/* Filter Gender/Tipe */}
-            <div className="inline-flex p-1 bg-white border border-[#e8e4db] rounded-full shadow-2xs">
+            <div className="inline-flex p-1.5 bg-white border border-[#e8e4db] rounded-full shadow-2xs">
               {['semua', 'putra', 'putri', 'campur'].map((t) => (
                 <button
                   key={t}
@@ -380,7 +380,7 @@ export default function CatalogPage() {
                     setFilterType(t);
                     setSelectedKostId(null);
                   }}
-                  className={`px-3.5 py-1 rounded-full text-xs font-semibold capitalize transition ${
+                  className={`px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-semibold capitalize transition ${
                     filterType === t
                       ? 'bg-slate-900 text-white shadow-xs'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-[#f6f3eb]'
@@ -394,9 +394,9 @@ export default function CatalogPage() {
         </div>
 
         {/* Layout Split: Kiri Grid Kartu / Panel Kamar, Kanan Peta Realtime */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 items-start">
           {/* Kolom Kiri: Menampilkan Kamar Kost Terpilih ATAU Grid Semua Kost */}
-          <div ref={leftColumnRef} className="lg:col-span-7 space-y-4">
+          <div ref={leftColumnRef} className="lg:col-span-7 space-y-6">
             {activeKost ? (
               /* Tampilan Kamar Kost Saat Titik Peta Diklik */
               <KostRoomPanel
@@ -410,23 +410,23 @@ export default function CatalogPage() {
                 onDeleteKost={(k) => setKostToDelete(k)}
               />
             ) : filteredKosts.length === 0 ? (
-              <div className="bg-white rounded-xl border border-slate-200 p-8 text-center space-y-2">
-                <p className="font-bold text-slate-800 text-sm">Tidak ada kost yang sesuai pencarian Anda</p>
-                <p className="text-xs text-slate-500">Coba ganti kata kunci seperti "UNS", "UMS", atau pilih kategori "Semua".</p>
+              <div className="bg-white rounded-2xl border border-slate-200 p-10 text-center space-y-3">
+                <p className="font-bold text-slate-800 text-base">Tidak ada kost yang sesuai pencarian Anda</p>
+                <p className="text-xs sm:text-sm text-slate-500">Coba ganti kata kunci seperti "UNS", "UMS", atau pilih kategori "Semua".</p>
                 <button
                   onClick={() => {
                     setSearchQuery('');
                     setFilterType('semua');
                     setSelectedKostId(null);
                   }}
-                  className="mt-2 text-xs text-orange-700 font-bold hover:underline"
+                  className="mt-3 text-xs sm:text-sm text-amber-900 bg-amber-50 border border-amber-200 font-bold px-4 py-2 rounded-full hover:bg-amber-100 transition inline-block"
                 >
                   Reset Filter
                 </button>
               </div>
             ) : (
               /* Grid Standar Semua Kost Solo */
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {filteredKosts.map((kost) => (
                   <PropertyCard
                     key={kost.id}
@@ -446,7 +446,7 @@ export default function CatalogPage() {
           </div>
 
           {/* Kolom Kanan: Peta Sebaran Fixed Height di Desktop */}
-          <div className="lg:col-span-5 h-[380px] lg:h-[calc(100vh-170px)] lg:sticky lg:top-20">
+          <div className="lg:col-span-5 h-[420px] lg:h-[calc(100vh-140px)] lg:sticky lg:top-24">
             <CatalogMap
               kosts={filteredKosts.map((k) => ({
                 id: k.id,

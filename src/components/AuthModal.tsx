@@ -83,7 +83,6 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
     }
   };
 
-  // Handle Register
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -147,7 +146,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
           }
         } else {
           setSuccessMsg(
-            'Pendaftaran berhasil! Akun Anda telah aktif, silakan masuk.'
+            'Pendaftaran berhasil! kost solo Anda telah aktif, silakan masuk.'
           );
           setMode('login');
           setIsLoading(false);
@@ -170,7 +169,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
 
       {/* Pop-up Modal yang Muncul dari Bawah */}
       <div className="relative w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl border border-[#e8e4db] p-6 sm:p-8 z-10 max-h-[92vh] overflow-y-auto transform transition-all animate-in slide-in-from-bottom-8 duration-300">
-        
+
         {/* Tombol Tanda Silang (✕) Tunggal di Pojok Kanan Atas */}
         <button
           onClick={onClose}
@@ -205,11 +204,10 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
               setError('');
               setSuccessMsg('');
             }}
-            className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
-              mode === 'login'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
+            className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${mode === 'login'
+              ? 'bg-slate-900 text-white shadow-xs'
+              : 'text-slate-600 hover:text-slate-900'
+              }`}
           >
             Masuk
           </button>
@@ -220,11 +218,10 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
               setError('');
               setSuccessMsg('');
             }}
-            className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
-              mode === 'register'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
+            className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${mode === 'register'
+              ? 'bg-slate-900 text-white shadow-xs'
+              : 'text-slate-600 hover:text-slate-900'
+              }`}
           >
             Daftar Akun
           </button>
