@@ -72,7 +72,7 @@ Mohon bantu proses pendataannya agar tampil di web. Terima kasih!`
     <>
       {/* Header dengan Warna Beige / Cream Khas Rukita */}
       <header className="sticky top-0 z-40 bg-[#f6f3eb]/95 backdrop-blur-md border-b border-[#e8e4db] shadow-2xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div className="max-w-screen-2xl mx-auto px-5 sm:px-8 lg:px-12 h-16 flex items-center justify-between">
           {/* Brand Logo */}
           <Link href="/" className="group transition hover:opacity-95 shrink-0">
             <Logo size="md" />
