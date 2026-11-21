@@ -6,11 +6,13 @@ import ImageSlider from './ImageSlider';
 
 interface KostRoomPanelProps {
   kost: PropertyItem;
+  isAdmin?: boolean;
   onBack: () => void;
   onSelectBooking: (kost: PropertyItem, room?: RoomItem) => void;
+  onDeleteKost?: (kost: PropertyItem) => void;
 }
 
-export default function KostRoomPanel({ kost, onBack, onSelectBooking }: KostRoomPanelProps) {
+export default function KostRoomPanel({ kost, isAdmin = false, onBack, onSelectBooking, onDeleteKost }: KostRoomPanelProps) {
   const [copied, setCopied] = useState(false);
 
   const defaultRooms: RoomItem[] = [
@@ -86,16 +88,33 @@ Apakah saat ini masih ada kamar yang kosong untuk disewa dan bisa dibantu jadwal
           <span className="text-xs font-bold text-slate-800 truncate">{kost.name}</span>
         </div>
 
-        {/* Tombol Tanda Silang (✕) Tunggal */}
-        <button
-          onClick={onBack}
-          type="button"
-          title="Tutup dan kembali ke daftar semua kost"
-          aria-label="Tutup dan kembali"
-          className="w-8 h-8 rounded-full bg-white hover:bg-slate-200 text-slate-700 hover:text-slate-900 border border-[#e8e4db] flex items-center justify-center text-xs font-bold transition shadow-2xs group shrink-0"
-        >
-          <span className="group-hover:rotate-90 transition-transform duration-200">✕</span>
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Tombol Hapus Properti Khusus Admin */}
+          {isAdmin && onDeleteKost && (
+            <button
+              onClick={() => onDeleteKost(kost)}
+              type="button"
+              title="Hapus Kost Ini dari Database"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold transition active:scale-95 cursor-pointer"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              <span>Hapus Kost</span>
+            </button>
+          )}
+
+          {/* Tombol Tanda Silang (✕) Tunggal */}
+          <button
+            onClick={onBack}
+            type="button"
+            title="Tutup dan kembali ke daftar semua kost"
+            aria-label="Tutup dan kembali"
+            className="w-8 h-8 rounded-full bg-white hover:bg-slate-200 text-slate-700 hover:text-slate-900 border border-[#e8e4db] flex items-center justify-center text-xs font-bold transition shadow-2xs group shrink-0"
+          >
+            <span className="group-hover:rotate-90 transition-transform duration-200">✕</span>
+          </button>
+        </div>
       </div>
 
       {/* Hero Kost Slider dengan Rasio Tetap */}

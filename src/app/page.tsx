@@ -137,6 +137,7 @@ export default function CatalogPage() {
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [filterType, setFilterType] = useState<string>('semua');
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   
   // State untuk kost yang dipilih dari peta / tombol "Cek Kamar"
   const [selectedKostId, setSelectedKostId] = useState<number | null>(null);
@@ -146,9 +147,30 @@ export default function CatalogPage() {
   const [selectedKostForBooking, setSelectedKostForBooking] = useState<PropertyItem | null>(null);
   const [selectedRoomForBooking, setSelectedRoomForBooking] = useState<RoomItem | null>(null);
 
+  // Modal konfirmasi hapus kost (khusus admin)
+  const [kostToDelete, setKostToDelete] = useState<PropertyItem | null>(null);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
   const leftColumnRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Cek status sesi admin
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user?.email?.toLowerCase() === 'kostsoloadmin@gmail.com') {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user?.email?.toLowerCase() === 'kostsoloadmin@gmail.com') {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
+    });
+
     async function loadKostsFromSupabase() {
       try {
         let rawData: any[] | null = null;
@@ -207,7 +229,44 @@ export default function CatalogPage() {
       }
     }
     loadKostsFromSupabase();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
+
+  // Handler Hapus Kost (Khusus Admin)
+  const handleDeleteKost = async (targetKost: PropertyItem) => {
+    setIsDeleting(true);
+    try {
+      // 1. Hapus kamar yang berelasi di tabel rooms
+      await supabase
+        .from('rooms')
+        .delete()
+        .eq('kost_id', targetKost.id);
+
+      // 2. Hapus data kost di tabel kosts Supabase
+      const { error } = await supabase
+        .from('kosts')
+        .delete()
+        .eq('id', targetKost.id);
+
+      if (error) {
+        throw error;
+      }
+
+      // 3. Update state lokal di halaman katalog user & admin seketika
+      setKosts((prev) => prev.filter((k) => k.id !== targetKost.id));
+      if (selectedKostId === targetKost.id) {
+        setSelectedKostId(null);
+      }
+      setKostToDelete(null);
+    } catch (err: any) {
+      alert('Gagal menghapus kost dari database: ' + (err.message || 'Error'));
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   // Filter kosts berdasarkan search dan filter gender
   const filteredKosts = useMemo(() => {
@@ -300,11 +359,13 @@ export default function CatalogPage() {
               /* Tampilan Kamar Kost Saat Titik Peta Diklik */
               <KostRoomPanel
                 kost={activeKost}
+                isAdmin={isAdmin}
                 onBack={() => setSelectedKostId(null)}
                 onSelectBooking={(k, r) => {
                   setSelectedKostForBooking(k);
                   setSelectedRoomForBooking(r || null);
                 }}
+                onDeleteKost={(k) => setKostToDelete(k)}
               />
             ) : filteredKosts.length === 0 ? (
               <div className="bg-white rounded-xl border border-slate-200 p-8 text-center space-y-2">
@@ -328,12 +389,14 @@ export default function CatalogPage() {
                   <PropertyCard
                     key={kost.id}
                     kost={kost}
+                    isAdmin={isAdmin}
                     isSelected={kost.id === selectedKostId}
                     onSelectDetail={(k) => setSelectedKostId(k.id)}
                     onSelectBooking={(k) => {
                       setSelectedKostForBooking(k);
                       setSelectedRoomForBooking(null);
                     }}
+                    onDeleteKost={(k) => setKostToDelete(k)}
                   />
                 ))}
               </div>
@@ -368,6 +431,42 @@ export default function CatalogPage() {
           setSelectedRoomForBooking(null);
         }}
       />
+
+      {/* Modal Konfirmasi Hapus Kost Khusus Admin */}
+      {kostToDelete && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-2xl border border-[#e8e4db] text-center animate-fadeIn">
+            <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto text-xl">
+              🗑️
+            </div>
+            <div>
+              <h3 className="font-black text-slate-900 text-base">Hapus Kost dari Katalog?</h3>
+              <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                Anda akan menghapus listing <strong>{kostToDelete.name}</strong>. Kost ini akan terhapus permanen dari database Supabase dan tidak akan muncul lagi di katalog user.
+              </p>
+            </div>
+
+            <div className="flex gap-2.5 pt-2">
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={() => setKostToDelete(null)}
+                className="flex-1 py-2.5 rounded-xl border border-[#e8e4db] hover:bg-slate-100 text-slate-700 font-bold text-xs transition cursor-pointer"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={() => handleDeleteKost(kostToDelete)}
+                className="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs transition shadow-sm active:scale-95 disabled:opacity-50 cursor-pointer"
+              >
+                {isDeleting ? 'Menghapus...' : 'Ya, Hapus'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal Booking Sewa Manual & Upload Resi */}
       <BookingModal

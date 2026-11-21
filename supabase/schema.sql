@@ -136,6 +136,11 @@ DO $$ BEGIN
     CREATE POLICY "Public Update Kosts" ON public.kosts FOR UPDATE USING (true);
 EXCEPTION WHEN undefined_object THEN null; END $$;
 
+DO $$ BEGIN
+    DROP POLICY IF EXISTS "Public Delete Kosts" ON public.kosts;
+    CREATE POLICY "Public Delete Kosts" ON public.kosts FOR DELETE USING (true);
+EXCEPTION WHEN undefined_object THEN null; END $$;
+
 -- Kebijakan Tabel Rooms
 DO $$ BEGIN
     DROP POLICY IF EXISTS "Public Read Rooms" ON public.rooms;
@@ -150,6 +155,11 @@ EXCEPTION WHEN undefined_object THEN null; END $$;
 DO $$ BEGIN
     DROP POLICY IF EXISTS "Public Update Rooms" ON public.rooms;
     CREATE POLICY "Public Update Rooms" ON public.rooms FOR UPDATE USING (true);
+EXCEPTION WHEN undefined_object THEN null; END $$;
+
+DO $$ BEGIN
+    DROP POLICY IF EXISTS "Public Delete Rooms" ON public.rooms;
+    CREATE POLICY "Public Delete Rooms" ON public.rooms FOR DELETE USING (true);
 EXCEPTION WHEN undefined_object THEN null; END $$;
 
 -- Kebijakan Tabel Bookings (Sewa & Verifikasi)
