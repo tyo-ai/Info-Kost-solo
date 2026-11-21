@@ -134,25 +134,27 @@ export default function PropertyCard({
           </p>
         </div>
 
-        <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
-          <div className="min-w-0">
+        <div className="pt-4 border-t border-slate-100 space-y-3">
+          {/* Baris Harga */}
+          <div>
             <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-0.5">Mulai dari</span>
-            <div className="text-slate-900 font-black text-base sm:text-lg tracking-tight leading-tight whitespace-nowrap">
+            <div className="text-slate-900 font-black text-lg tracking-tight">
               Rp {Number(lowestPrice).toLocaleString('id-ID')}
-              <span className="text-xs font-normal text-slate-400 ml-1">/bln</span>
+              <span className="text-sm font-normal text-slate-400 ml-1">/bulan</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          {/* Baris Tombol Aksi */}
+          <div className="flex items-center gap-2">
             <button
               onClick={() => onSelectDetail(kost)}
-              className="bg-[#f6f3eb] hover:bg-[#eae5d8] text-slate-700 text-xs sm:text-sm font-semibold px-3 sm:px-4 py-2.5 rounded-2xl transition border border-[#e8e4db] whitespace-nowrap"
+              className="flex-1 bg-[#f6f3eb] hover:bg-[#eae5d8] text-slate-700 text-sm font-semibold py-2.5 rounded-2xl transition border border-[#e8e4db] text-center"
             >
               Cek Kamar
             </button>
             <button
               onClick={() => onSelectBooking(kost)}
-              className="bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold px-3.5 sm:px-5 py-2.5 rounded-2xl shadow-sm transition active:scale-95 whitespace-nowrap"
+              className="flex-1 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold py-2.5 rounded-2xl shadow-sm transition active:scale-95 text-center"
             >
               Ajukan Sewa
             </button>
